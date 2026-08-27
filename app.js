@@ -12,9 +12,10 @@ async function readToken() { const stored = await getSecureSetting('github-token
 async function loadData() {
   const saved = localStorage.getItem('invoice-simple-data');
   data = saved ? JSON.parse(saved) : await fetch('data.json').then((r) => r.json());
-  renderLists(); renderDatalists();
+  renderLists(); renderDatalists(); applyBranding();
 }
-function saveData() { localStorage.setItem('invoice-simple-data', JSON.stringify(data)); renderLists(); renderDatalists(); }
+function saveData() { localStorage.setItem('invoice-simple-data', JSON.stringify(data)); renderLists(); renderDatalists(); applyBranding(); }
+function applyBranding() { for (const [property, id] of [['logoPath', 'logoImage'], ['qrPath', 'qrImage']]) { const image = $(`#${id}`); const exists = Boolean(data[property]); image.classList.toggle('hidden', !exists); if (exists) image.src = new URL(data[property], location.href).href; } $('#logoFallback').classList.toggle('hidden', Boolean(data.logoPath)); }
 function renderDatalists() {
   $('#parties').innerHTML = data.parties.map((party) => `<option value="${escapeHtml(party)}">`).join('');
   document.querySelectorAll('#items').forEach((list) => list.innerHTML = data.items.map((item) => `<option value="${escapeHtml(item.name)}">`).join(''));
@@ -34,28 +35,35 @@ function updateTotals() {
   $('#subtotal').textContent = currency.format(total); $('#grandTotal').textContent = currency.format(total);
 }
 function setView(view) { if (view === 'settings' && !installed) return; $('#invoiceView').classList.toggle('hidden', view !== 'invoice'); $('#settingsView').classList.toggle('hidden', view !== 'settings'); }
+async function hasConnection() { return Boolean(await getSecureSetting('github-repo') && await getSecureSetting('github-branch') && await getSecureSetting('github-token')); }
+async function requireConnection() { if (await hasConnection()) return true; alert('Set up and save the Data connection first.'); $('#dataSettings').scrollIntoView({ behavior: 'smooth', block: 'start' }); return false; }
+async function saveConnection() { const repo = $('#githubRepo').value.trim(), branch = $('#githubBranch').value.trim(), enteredToken = $('#githubToken').value.trim(), status = $('#connectionStatus'); if (!/^[^/]+\/[^/]+$/.test(repo) || !branch || (!enteredToken && !(await getSecureSetting('github-token')))) { status.textContent = 'Enter a valid repository, branch, and token.'; status.className = 'mt-3 text-sm text-red-700'; return; } await setSecureSetting('github-repo', repo); await setSecureSetting('github-branch', branch); if (enteredToken) await saveToken(enteredToken); $('#githubToken').value = ''; $('#tokenHint').textContent = 'A token is saved. Enter a new one only to replace it.'; status.textContent = 'Connection saved.'; status.className = 'mt-3 text-sm text-green-700'; }
 
 document.addEventListener('click', async (event) => {
   const target = event.target;
   if (target.dataset.view) setView(target.dataset.view);
   if (target.id === 'addLine') addLine();
   if (target.classList.contains('remove-line')) { target.closest('tr').remove(); updateTotals(); }
-  if (target.classList.contains('remove-party')) { data.parties.splice(+target.dataset.party, 1); saveData(); }
-  if (target.classList.contains('remove-item')) { data.items.splice(+target.dataset.item, 1); saveData(); }
+  if (target.classList.contains('remove-party')) { if (!(await requireConnection())) return; data.parties.splice(+target.dataset.party, 1); saveData(); }
+  if (target.classList.contains('remove-item')) { if (!(await requireConnection())) return; data.items.splice(+target.dataset.item, 1); saveData(); }
   if (target.id === 'newInvoice') { $('#partyInput').value = ''; $('#notes').value = ''; $('#lineItems').innerHTML = ''; addLine(); }
   if (target.id === 'printInvoice') window.print();
-  if (target.id === 'commitChanges') await commitData();
+  if (target.id === 'saveConnection') await saveConnection();
+  if (target.id === 'commitParties' || target.id === 'commitItems') { if (await requireConnection()) await commitData(); }
+  if (target.id === 'saveLogo') await uploadAsset('logo');
+  if (target.id === 'saveQr') await uploadAsset('qr');
 });
 document.addEventListener('input', (event) => { if (event.target.closest('#lineItems')) updateTotals(); });
 document.addEventListener('change', (event) => { if (event.target.classList.contains('item-name')) { const item = data.items.find((x) => x.name === event.target.value); if (item) { event.target.closest('tr').querySelector('.rate').value = item.rate; updateTotals(); } } });
-$('#partyForm').addEventListener('submit', (event) => { event.preventDefault(); const name = $('#newParty').value.trim(); if (name && !data.parties.includes(name)) { data.parties.push(name); data.parties.sort(); saveData(); } event.target.reset(); });
-$('#itemForm').addEventListener('submit', (event) => { event.preventDefault(); const name = $('#newItem').value.trim(), rate = +$('#newRate').value; if (name && !data.items.some((x) => x.name === name)) { data.items.push({ name, rate }); data.items.sort((a,b) => a.name.localeCompare(b.name)); saveData(); } event.target.reset(); });
+$('#partyForm').addEventListener('submit', async (event) => { event.preventDefault(); if (!(await requireConnection())) return; const name = $('#newParty').value.trim(); if (name && !data.parties.includes(name)) { data.parties.push(name); data.parties.sort(); saveData(); } event.target.reset(); });
+$('#itemForm').addEventListener('submit', async (event) => { event.preventDefault(); if (!(await requireConnection())) return; const name = $('#newItem').value.trim(), rate = +$('#newRate').value; if (name && !data.items.some((x) => x.name === name)) { data.items.push({ name, rate }); data.items.sort((a,b) => a.name.localeCompare(b.name)); saveData(); } event.target.reset(); });
 async function commitData() {
-  if (!installed) return; const [repo, branch, enteredToken] = [$('#githubRepo').value.trim(), $('#githubBranch').value.trim(), $('#githubToken').value.trim()]; const status = $('#commitStatus'); const token = enteredToken || await readToken();
+  if (!installed) return; const [repo, branch] = [await getSecureSetting('github-repo'), await getSecureSetting('github-branch')]; const status = $('#commitStatus'); const token = await readToken();
   if (!/^[^/]+\/[^/]+$/.test(repo) || !branch || !token) { status.textContent = 'Enter repository, branch, and token.'; status.className = 'mt-3 text-sm text-red-700'; return; }
   status.textContent = 'Committing…'; status.className = 'mt-3 text-sm text-amber-900';
-  try { if (enteredToken) await saveToken(enteredToken); await setSecureSetting('github-repo', repo); await setSecureSetting('github-branch', branch); const url = `https://api.github.com/repos/${repo}/contents/data.json`; const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }; const current = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers }); if (!current.ok) throw new Error('Could not read data.json. Check repository, branch, and token.'); const file = await current.json(); const payload = { message: 'Update invoice parties and items', content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2) + '\n'))), sha: file.sha, branch }; const response = await fetch(url, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error((await response.json()).message || 'Commit failed.'); status.textContent = 'Saved and committed. GitHub Pages will reflect it after its next deployment.'; status.className = 'mt-3 text-sm text-green-700'; $('#githubToken').value = ''; $('#tokenHint').textContent = 'A token is saved. Enter a new one only to replace it.'; } catch (error) { status.textContent = error.message; status.className = 'mt-3 text-sm text-red-700'; }
+  try { const url = `https://api.github.com/repos/${repo}/contents/data.json`; const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }; const current = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers }); if (!current.ok) throw new Error('Could not read data.json. Check repository, branch, and token.'); const file = await current.json(); const payload = { message: 'Update invoice data', content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2) + '\n'))), sha: file.sha, branch }; const response = await fetch(url, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error((await response.json()).message || 'Commit failed.'); status.textContent = 'Saved and committed. GitHub Pages will reflect it after its next deployment.'; status.className = 'mt-3 text-sm text-green-700'; } catch (error) { status.textContent = error.message; status.className = 'mt-3 text-sm text-red-700'; }
 }
+async function uploadAsset(kind) { if (!(await requireConnection())) return; const file = $(`#${kind}File`).files[0], status = $('#commitStatus'); if (!file || !file.type.startsWith('image/') || file.size > 2 * 1024 * 1024) { status.textContent = 'Choose an image under 2 MB.'; status.className = 'mt-3 text-sm text-red-700'; return; } status.textContent = `Uploading ${kind}…`; const repo = await getSecureSetting('github-repo'), branch = await getSecureSetting('github-branch'), token = await readToken(); const ext = ({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/svg+xml': 'svg' })[file.type] || 'png'; const path = `assets/${kind}.${ext}`, url = `https://api.github.com/repos/${repo}/contents/${path}`, headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }; try { const current = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers }); const existing = current.ok ? await current.json() : null; if (!current.ok && current.status !== 404) throw new Error('Could not access the asset location.'); const bytes = new Uint8Array(await file.arrayBuffer()); let binary = ''; bytes.forEach((byte) => binary += String.fromCharCode(byte)); const response = await fetch(url, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: `Upload invoice ${kind}`, content: btoa(binary), ...(existing ? { sha: existing.sha } : {}), branch }) }); if (!response.ok) throw new Error((await response.json()).message || 'Upload failed.'); data[`${kind}Path`] = path; saveData(); await commitData(); } catch (error) { status.textContent = error.message; status.className = 'mt-3 text-sm text-red-700'; } }
 let installPrompt;
 window.addEventListener('beforeinstallprompt', (event) => { event.preventDefault(); installPrompt = event; $('#installButton').classList.remove('hidden'); });
 $('#installButton').addEventListener('click', async () => { if (!installPrompt) return; installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null; $('#installButton').classList.add('hidden'); });
