@@ -1,8 +1,22 @@
 {
-  "parties": ["Acme Traders", "Bluebird Studio", "Northstar Supplies"],
+  "parties": [
+    "Acme Traders",
+    "Bluebird Studio",
+    "Northstar Supplies",
+    "SSM Gondal"
+  ],
   "items": [
-    { "name": "Consulting", "rate": 2500 },
-    { "name": "Design work", "rate": 1800 },
-    { "name": "Website maintenance", "rate": 1200 }
+    {
+      "name": "Consulting",
+      "rate": 2500
+    },
+    {
+      "name": "Design work",
+      "rate": 1800
+    },
+    {
+      "name": "Website maintenance",
+      "rate": 1200
+    }
   ]
 }
