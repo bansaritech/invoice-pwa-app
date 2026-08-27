@@ -1,6 +1,13 @@
 const $ = (selector) => document.querySelector(selector);
 let data;
 const currency = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+const installed = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const dbPromise = new Promise((resolve, reject) => { const request = indexedDB.open('invoice-simple-secure', 1); request.onupgradeneeded = () => request.result.createObjectStore('settings'); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); });
+async function getSecureSetting(key) { const db = await dbPromise; return new Promise((resolve, reject) => { const request = db.transaction('settings').objectStore('settings').get(key); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); }); }
+async function setSecureSetting(key, value) { const db = await dbPromise; return new Promise((resolve, reject) => { const request = db.transaction('settings', 'readwrite').objectStore('settings').put(value, key); request.onsuccess = () => resolve(); request.onerror = () => reject(request.error); }); }
+async function cryptoKey() { let key = await getSecureSetting('crypto-key'); if (!key) { key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']); await setSecureSetting('crypto-key', key); } return key; }
+async function saveToken(token) { const iv = crypto.getRandomValues(new Uint8Array(12)); const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await cryptoKey(), new TextEncoder().encode(token)); await setSecureSetting('github-token', { iv: [...iv], encrypted }); }
+async function readToken() { const stored = await getSecureSetting('github-token'); if (!stored) return ''; const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: new Uint8Array(stored.iv) }, await cryptoKey(), stored.encrypted); return new TextDecoder().decode(decrypted); }
 
 async function loadData() {
   const saved = localStorage.getItem('invoice-simple-data');
@@ -26,7 +33,7 @@ function updateTotals() {
   let total = 0; document.querySelectorAll('#lineItems tr').forEach((row) => { const amount = (+row.querySelector('.quantity').value || 0) * (+row.querySelector('.rate').value || 0); row.querySelector('.amount').textContent = currency.format(amount); total += amount; });
   $('#subtotal').textContent = currency.format(total); $('#grandTotal').textContent = currency.format(total);
 }
-function setView(view) { $('#invoiceView').classList.toggle('hidden', view !== 'invoice'); $('#settingsView').classList.toggle('hidden', view !== 'settings'); }
+function setView(view) { if (view === 'settings' && !installed) return; $('#invoiceView').classList.toggle('hidden', view !== 'invoice'); $('#settingsView').classList.toggle('hidden', view !== 'settings'); }
 
 document.addEventListener('click', async (event) => {
   const target = event.target;
@@ -44,14 +51,16 @@ document.addEventListener('change', (event) => { if (event.target.classList.cont
 $('#partyForm').addEventListener('submit', (event) => { event.preventDefault(); const name = $('#newParty').value.trim(); if (name && !data.parties.includes(name)) { data.parties.push(name); data.parties.sort(); saveData(); } event.target.reset(); });
 $('#itemForm').addEventListener('submit', (event) => { event.preventDefault(); const name = $('#newItem').value.trim(), rate = +$('#newRate').value; if (name && !data.items.some((x) => x.name === name)) { data.items.push({ name, rate }); data.items.sort((a,b) => a.name.localeCompare(b.name)); saveData(); } event.target.reset(); });
 async function commitData() {
-  const [repo, branch, token] = [$('#githubRepo').value.trim(), $('#githubBranch').value.trim(), $('#githubToken').value.trim()]; const status = $('#commitStatus');
+  if (!installed) return; const [repo, branch, enteredToken] = [$('#githubRepo').value.trim(), $('#githubBranch').value.trim(), $('#githubToken').value.trim()]; const status = $('#commitStatus'); const token = enteredToken || await readToken();
   if (!/^[^/]+\/[^/]+$/.test(repo) || !branch || !token) { status.textContent = 'Enter repository, branch, and token.'; status.className = 'mt-3 text-sm text-red-700'; return; }
   status.textContent = 'Committing…'; status.className = 'mt-3 text-sm text-amber-900';
-  try { const url = `https://api.github.com/repos/${repo}/contents/data.json`; const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }; const current = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers }); if (!current.ok) throw new Error('Could not read data.json. Check repository, branch, and token.'); const file = await current.json(); const payload = { message: 'Update invoice parties and items', content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2) + '\n'))), sha: file.sha, branch }; const response = await fetch(url, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error((await response.json()).message || 'Commit failed.'); status.textContent = 'Committed. GitHub Pages will reflect it after its next deployment.'; status.className = 'mt-3 text-sm text-green-700'; $('#githubToken').value = ''; } catch (error) { status.textContent = error.message; status.className = 'mt-3 text-sm text-red-700'; }
+  try { if (enteredToken) await saveToken(enteredToken); await setSecureSetting('github-repo', repo); await setSecureSetting('github-branch', branch); const url = `https://api.github.com/repos/${repo}/contents/data.json`; const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' }; const current = await fetch(`${url}?ref=${encodeURIComponent(branch)}`, { headers }); if (!current.ok) throw new Error('Could not read data.json. Check repository, branch, and token.'); const file = await current.json(); const payload = { message: 'Update invoice parties and items', content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2) + '\n'))), sha: file.sha, branch }; const response = await fetch(url, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error((await response.json()).message || 'Commit failed.'); status.textContent = 'Saved and committed. GitHub Pages will reflect it after its next deployment.'; status.className = 'mt-3 text-sm text-green-700'; $('#githubToken').value = ''; $('#tokenHint').textContent = 'A token is saved. Enter a new one only to replace it.'; } catch (error) { status.textContent = error.message; status.className = 'mt-3 text-sm text-red-700'; }
 }
 let installPrompt;
 window.addEventListener('beforeinstallprompt', (event) => { event.preventDefault(); installPrompt = event; $('#installButton').classList.remove('hidden'); });
 $('#installButton').addEventListener('click', async () => { if (!installPrompt) return; installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null; $('#installButton').classList.add('hidden'); });
+if (installed) $('#settingsButton').classList.remove('hidden');
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 $('#invoiceDate').value = new Date().toISOString().slice(0, 10);
 await loadData(); addLine();
+if (installed) { $('#githubRepo').value = await getSecureSetting('github-repo') || ''; $('#githubBranch').value = await getSecureSetting('github-branch') || 'main'; if (await getSecureSetting('github-token')) $('#tokenHint').textContent = 'A token is saved. Enter a new one only to replace it.'; }
