@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Design Inventory</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<style>
+  .wrap { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+  .hero { margin-bottom: 36px; }
+  .hero .eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .16em; color: var(--ink-3); }
+  .hero h1 { font-family: var(--display); font-weight: 600; font-size: clamp(34px, 9vw, 58px); letter-spacing: -0.03em; margin: 8px 0 10px; }
+  .hero p { color: var(--ink-2); max-width: 60ch; font-size: 15px; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  .screen { display: flex; align-items: center; gap: 14px; padding: 16px; }
+  .screen .no { font-family: var(--mono); font-size: 12px; color: var(--ink-3); width: 26px; }
+  .screen .grow { flex: 1; }
+  .screen .t { font-weight: 700; font-size: 15px; }
+  .screen .d { font-size: 12.5px; color: var(--ink-2); margin-top: 2px; }
+  .screen[aria-disabled="true"] { opacity: .55; }
+  .tag { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; padding: 3px 7px; border-radius: 6px; }
+  .tag.done { background: color-mix(in srgb, var(--paid) 12%, transparent); color: var(--paid); }
+  .tag.next { background: var(--ink); color: var(--pop); }
+  .tag.plan { background: var(--paper-2); color: var(--ink-3); }
+  .group { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--ink-3); margin: 28px 0 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Design · Modern Ledger</div>
+    <h1>Ledger — screen inventory</h1>
+    <p>Fresh redesign of the invoicing app. Mobile-first, minimal, information-rich, modern. Click a screen to open its mockup.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">
+      <a href="theme.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none">◆ Theme &amp; tokens →</a>
+      <a href="variants.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none">Compare dashboard directions →</a>
+    </div>
+  </div>
+
+  <div class="group">A · Onboarding & entry</div>
+  <div class="grid">
+    <a class="card screen" href="welcome.html"><span class="no">01</span><span class="grow"><span class="t">Welcome / sign-in</span><span class="d">Brand intro, connect data, install app</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="setup.html"><span class="no">02</span><span class="grow"><span class="t">Setup wizard</span><span class="d">Business profile, GSTIN, tax defaults, source</span></span><span class="tag done">Done</span></a>
+  </div>
+
+  <div class="group">B · Core workspace</div>
+  <div class="grid">
+    <a class="card screen" href="dashboard.html"><span class="no">03</span><span class="grow"><span class="t">Dashboard / Home</span><span class="d">KPIs, collections, recent invoices</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="invoices.html"><span class="no">04</span><span class="grow"><span class="t">Invoices list</span><span class="d">Filters, status chips, search, pagination</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="invoice-editor.html"><span class="no">05</span><span class="grow"><span class="t">Invoice editor</span><span class="d">Line items, GST, discounts, live totals</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="invoice-detail.html"><span class="no">06</span><span class="grow"><span class="t">Invoice detail / preview</span><span class="d">Print/PDF layout, record payment, timeline</span></span><span class="tag done">Done</span></a>
+  </div>
+
+  <div class="group">C · People & catalog</div>
+  <div class="grid">
+    <a class="card screen" href="clients.html"><span class="no">07</span><span class="grow"><span class="t">Clients list</span><span class="d">Balances per client, search</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="client-detail.html"><span class="no">08</span><span class="grow"><span class="t">Client detail / ledger</span><span class="d">Statement, running balance, aging</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="items.html"><span class="no">09</span><span class="grow"><span class="t">Items / catalog</span><span class="d">Rates + per-item GST</span></span><span class="tag done">Done</span></a>
+  </div>
+
+  <div class="group">D · Money</div>
+  <div class="grid">
+    <a class="card screen" href="payments.html"><span class="no">10</span><span class="grow"><span class="t">Payments</span><span class="d">Record & list payments, receipts</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="reports.html"><span class="no">11</span><span class="grow"><span class="t">Reports</span><span class="d">Revenue, aging, GST summary, top clients</span></span><span class="tag done">Done</span></a>
+  </div>
+
+  <div class="group">E · Config & system</div>
+  <div class="grid">
+    <a class="card screen" href="settings.html"><span class="no">12</span><span class="grow"><span class="t">Settings</span><span class="d">Profile, tax, numbering, branding, source</span></span><span class="tag done">Done</span></a>
+    <a class="card screen" href="states.html"><span class="no">13</span><span class="grow"><span class="t">States reference</span><span class="d">Empty, offline, error, loading</span></span><span class="tag done">Done</span></a>
+  </div>
+</div>
+</body>
+</html>

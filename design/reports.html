@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Reports</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+</head>
+<body data-active="reports" data-title="Reports" data-fab="none">
+<div class="app">
+  <div id="nav-side"></div>
+  <div id="nav-top"></div>
+  <main class="main">
+    <div class="page-head">
+      <div><div class="eyebrow">Apr–Mar</div><h1>Reports</h1></div>
+      <div class="desktop-actions">
+        <button class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg> Export</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <select class="select" style="flex:1;max-width:220px"><option>FY 2026</option><option>FY 2025</option><option>FY 2024</option></select>
+      <button class="btn btn-ghost mobile-only" style="height:44px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg> Export</button>
+    </div>
+
+    <section class="kpis compact">
+      <div class="card kpi feature" style="grid-column:auto"><div class="label">Invoiced</div><div class="value num"><span class="rupee">₹</span>48,20,900</div><div class="delta up">▲ 21.7% YoY</div></div>
+      <div class="card kpi"><div class="label"><span class="dot" style="background:var(--paid)"></span> Collected</div><div class="value num"><span class="rupee">₹</span>44,36,400</div></div>
+      <div class="card kpi"><div class="label"><span class="dot" style="background:var(--due)"></span> Outstanding</div><div class="value num"><span class="rupee">₹</span>3,84,500</div></div>
+      <div class="card kpi"><div class="label"><span class="dot" style="background:var(--info)"></span> GST collected</div><div class="value num"><span class="rupee">₹</span>7,35,200</div></div>
+    </section>
+
+    <div class="split">
+      <div>
+        <section class="section" style="margin-top:20px">
+          <div class="section-head"><h2>Revenue by month</h2><span class="period-note">FY 2026</span></div>
+          <div class="card card-pad">
+            <div class="chart year">
+              <div class="bar"><div class="col" style="height:100%"><span style="height:40%"></span></div><div class="m">Apr</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span style="height:52%"></span></div><div class="m">May</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span style="height:61%"></span></div><div class="m">Jun</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span style="height:55%"></span></div><div class="m">Jul</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span style="height:70%"></span></div><div class="m">Aug</div></div>
+              <div class="bar now"><div class="col" style="height:100%"><span style="height:90%"></span></div><div class="m">Sep</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span class="empty" style="height:3%"></span></div><div class="m">Oct</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span class="empty" style="height:3%"></span></div><div class="m">Nov</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span class="empty" style="height:3%"></span></div><div class="m">Dec</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span class="empty" style="height:3%"></span></div><div class="m">Jan</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span class="empty" style="height:3%"></span></div><div class="m">Feb</div></div>
+              <div class="bar"><div class="col" style="height:100%"><span class="empty" style="height:3%"></span></div><div class="m">Mar</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h2>GST summary</h2><span class="period-note">Output tax</span></div>
+          <div class="card">
+            <div class="lhead" style="display:grid;grid-template-columns:1fr auto auto;gap:12px"><span>Rate</span><span class="r">Taxable</span><span class="r">GST</span></div>
+            <ul class="ledger">
+              <li style="grid-template-columns:1fr auto auto"><div><div class="who">18%</div></div><div class="amt num"><span class="rupee">₹</span>36,20,000</div><div class="amt num"><span class="rupee">₹</span>6,51,600</div></li>
+              <li style="grid-template-columns:1fr auto auto"><div><div class="who">12%</div></div><div class="amt num"><span class="rupee">₹</span>6,80,000</div><div class="amt num"><span class="rupee">₹</span>81,600</div></li>
+              <li style="grid-template-columns:1fr auto auto"><div><div class="who">5%</div></div><div class="amt num"><span class="rupee">₹</span>40,000</div><div class="amt num"><span class="rupee">₹</span>2,000</div></li>
+              <li style="grid-template-columns:1fr auto auto"><div><div class="who">Exempt</div></div><div class="amt num"><span class="rupee">₹</span>1,20,000</div><div class="amt num" style="color:var(--ink-3)"><span class="rupee">₹</span>0</div></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section class="section" style="margin-top:20px">
+          <div class="section-head"><h2>Outstanding aging</h2></div>
+          <div class="card card-pad">
+            <div class="aging">
+              <div class="r"><div class="rt"><span>0–30 days</span><span class="num"><span class="rupee">₹</span>2,10,300</span></div><div class="track"><div class="fill" style="width:55%;background:var(--c-green)"></div></div></div>
+              <div class="r"><div class="rt"><span>31–60 days</span><span class="num"><span class="rupee">₹</span>1,12,000</span></div><div class="track"><div class="fill" style="width:29%;background:var(--due)"></div></div></div>
+              <div class="r"><div class="rt"><span>60+ days</span><span class="num"><span class="rupee">₹</span>62,200</span></div><div class="track"><div class="fill" style="width:16%;background:var(--over)"></div></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h2>Top clients</h2><a href="clients.html">All →</a></div>
+          <div class="card">
+            <ul class="clients">
+              <li><span class="ini">NS</span><span class="grow"><span class="nm">Northstar Supplies</span><span class="sub">18 invoices</span></span><span class="bal num"><span class="rupee">₹</span>14,20,000</span></li>
+              <li><span class="ini">AT</span><span class="grow"><span class="nm">Acme Traders</span><span class="sub">22 invoices</span></span><span class="bal num"><span class="rupee">₹</span>11,80,000</span></li>
+              <li><span class="ini">MF</span><span class="grow"><span class="nm">Meridian Foods</span><span class="sub">9 invoices</span></span><span class="bal num"><span class="rupee">₹</span>6,40,000</span></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <div id="nav-bot"></div>
+</div>
+<script src="assets/shell.js"></script>
+<script src="assets/menu.js"></script>
+</body>
+</html>

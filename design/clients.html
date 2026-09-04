@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Clients</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+</head>
+<body data-active="clients" data-title="Clients" data-fab="add-client">
+<div class="app">
+  <div id="nav-side"></div>
+  <div id="nav-top"></div>
+  <main class="main">
+    <div class="page-head">
+      <div><div class="eyebrow"><span id="count">6 clients</span></div><h1>Clients</h1></div>
+      <div class="desktop-actions"><button class="btn btn-primary" onclick="openDrawer('drawer-add-client')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add client</button></div>
+    </div>
+
+    <div class="toolbar">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="search" placeholder="Search clients" /></label>
+      <button class="btn btn-ghost" onclick="openDrawer('drawer-filters')" style="height:44px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+        Filters<span id="fcount" class="fbadge" hidden></span>
+      </button>
+    </div>
+
+    <div id="activefilters" class="filter-row" style="flex-wrap:wrap;overflow:visible"></div>
+
+    <div class="kpis compact" style="grid-template-columns:repeat(2,1fr)">
+      <div class="card kpi"><div class="label">Total receivable</div><div class="value num" id="k-receivable"><span class="rupee">₹</span>1,87,150</div></div>
+      <div class="card kpi"><div class="label">Clients with dues</div><div class="value num" id="k-dues">3</div></div>
+    </div>
+
+    <div class="card" style="overflow:hidden;margin-top:6px">
+      <ul class="clients striped" id="list"></ul>
+    </div>
+  </main>
+  <div id="nav-bot"></div>
+</div>
+
+<!-- Filters drawer -->
+<aside class="drawer" id="drawer-filters" role="dialog" aria-label="Filters">
+  <div class="drawer-head">
+    <div><h3>Filters</h3><div class="sub">Sort, group & filter</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Sort by</span>
+      <select class="input" id="sort">
+        <option value="outstanding">Outstanding — high to low</option>
+        <option value="name">Name A–Z</option>
+        <option value="lifetime">Lifetime billed</option>
+        <option value="recent">Recent activity</option>
+      </select>
+    </label>
+    <div class="field"><span class="lab">Group by</span>
+      <div class="segment" id="group" style="display:flex;width:100%">
+        <button class="on" data-group="none" style="flex:1">None</button>
+        <button data-group="status" style="flex:1">Status</button>
+      </div>
+    </div>
+    <div class="field" style="margin:0"><span class="lab">Status</span>
+      <div class="filter-row" id="filters" style="flex-wrap:wrap;overflow:visible">
+        <button class="fchip on" data-status="all">All</button>
+        <button class="fchip" data-status="overdue">Overdue</button>
+        <button class="fchip" data-status="owing">Owing</button>
+        <button class="fchip" data-status="settled">Settled</button>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" id="resetFilters">Reset</button>
+    <button class="btn btn-primary" onclick="closeDrawer()">Show results</button>
+  </div>
+</aside>
+
+<!-- Add client drawer -->
+<aside class="drawer" id="drawer-add-client" role="dialog" aria-label="Add client">
+  <div class="drawer-head">
+    <div><h3>Add client</h3><div class="sub">A customer or party you bill</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Business / party name</span><input class="input" placeholder="e.g. Acme Traders" /></label>
+    <label class="field"><span class="lab">GSTIN</span><input class="input num" placeholder="24AABCB1234Z1Z5" /></label>
+    <div class="grid-2">
+      <label class="field"><span class="lab">Phone</span><input class="input num" placeholder="+91 …" /></label>
+      <label class="field"><span class="lab">Payment terms</span><select class="input"><option>Net 15</option><option>Net 30</option><option>Due on receipt</option></select></label>
+    </div>
+    <label class="field"><span class="lab">Email</span><input class="input" placeholder="accounts@company.in" /></label>
+    <label class="field" style="margin:0"><span class="lab">Address</span><textarea class="input" placeholder="Billing address…"></textarea></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button>
+    <button class="btn btn-primary" onclick="closeDrawer()">Add client</button>
+  </div>
+</aside>
+
+<script src="assets/drawer.js"></script>
+<script>
+  const CLIENTS = [
+    { name: 'Northstar Supplies', ini: 'NS', invoices: 6, outstanding: 124000, lifetime: 842000, last: '2026-08-31', status: 'overdue' },
+    { name: 'Acme Traders',       ini: 'AT', invoices: 9, outstanding: 44250,  lifetime: 560000, last: '2026-09-02', status: 'owing' },
+    { name: 'Meridian Foods',     ini: 'MF', invoices: 3, outstanding: 18900,  lifetime: 210000, last: '2026-08-27', status: 'owing' },
+    { name: 'Bluebird Studio',    ini: 'BS', invoices: 5, outstanding: 0,      lifetime: 180000, last: '2026-08-29', status: 'settled' },
+    { name: 'Sunrise Textiles',   ini: 'ST', invoices: 4, outstanding: 0,      lifetime: 96000,  last: '2026-08-24', status: 'settled' },
+    { name: 'Patel Hardware',     ini: 'PH', invoices: 2, outstanding: 0,      lifetime: 38000,  last: '2026-08-21', status: 'settled' }
+  ];
+  const STATUS = { overdue: ['over', 'Overdue'], owing: ['due', 'Owing'], settled: ['paid', 'Settled'] };
+  const STATUS_ORDER = ['overdue', 'owing', 'settled'];
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const inr = new Intl.NumberFormat('en-IN');
+  const money = (n) => `<span class="rupee">₹</span>${inr.format(n)}`;
+  const fmtDate = (s) => { const d = new Date(s); return String(d.getDate()).padStart(2, '0') + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear(); };
+  const state = { filter: 'all', sort: 'outstanding', group: 'none', q: '' };
+  const emptyRow = (msg) => `<li style="display:block;padding:0;cursor:default"><div class="empty"><div class="em"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>No clients found</h3><p>${msg}</p></div></li>`;
+
+  function sortRows(arr) {
+    const a = [...arr]; const s = state.sort;
+    if (s === 'outstanding') a.sort((x, y) => y.outstanding - x.outstanding);
+    else if (s === 'name') a.sort((x, y) => x.name.localeCompare(y.name));
+    else if (s === 'lifetime') a.sort((x, y) => y.lifetime - x.lifetime);
+    else if (s === 'recent') a.sort((x, y) => y.last.localeCompare(x.last));
+    return a;
+  }
+  function rowHtml(c) {
+    const [cls, label] = STATUS[c.status];
+    const balColor = c.status === 'overdue' ? 'var(--over)' : c.status === 'owing' ? 'var(--due)' : 'var(--ink-3)';
+    const stripe = state.group === 'status' ? '' : `<div class="statusbar s-${cls}"><b>${label}</b></div>`;
+    return `<li><a href="client-detail.html" style="display:contents"><span class="ini s-${cls}">${c.ini}</span><span class="grow"><span class="nm">${c.name}</span><span class="sub">${c.invoices} invoices</span></span><span class="bal num" style="color:${balColor}">${money(c.outstanding)}</span>${stripe}</a></li>`;
+  }
+  function groupHead(label, items) {
+    const total = items.reduce((s, i) => s + i.outstanding, 0);
+    return `<li class="group-head"><span>${label}</span><span class="gcount">${items.length} · <span class="num">${money(total)}</span></span></li>`;
+  }
+  function syncControls() {
+    document.getElementById('sort').value = state.sort;
+    document.querySelectorAll('#filters .fchip').forEach((x) => x.classList.toggle('on', x.dataset.status === state.filter));
+    document.querySelectorAll('#group button').forEach((x) => x.classList.toggle('on', x.dataset.group === state.group));
+  }
+  function updateFilterUI() {
+    const pills = [];
+    if (state.filter !== 'all') pills.push(['status', 'Status: ' + STATUS[state.filter][1]]);
+    if (state.group !== 'none') pills.push(['group', 'Grouped by Status']);
+    const badge = document.getElementById('fcount');
+    if (pills.length) { badge.hidden = false; badge.textContent = pills.length; } else { badge.hidden = true; }
+    document.getElementById('activefilters').innerHTML = pills.map((p) => `<button class="fchip on" data-clear="${p[0]}">${p[1]} <span aria-hidden="true">×</span></button>`).join('');
+  }
+  function render() {
+    // KPIs reflect all clients.
+    const receivable = CLIENTS.reduce((s, c) => s + c.outstanding, 0);
+    document.getElementById('k-receivable').innerHTML = money(receivable);
+    document.getElementById('k-dues').textContent = CLIENTS.filter((c) => c.outstanding > 0).length;
+
+    let data = CLIENTS.filter((c) =>
+      (state.filter === 'all' || c.status === state.filter) &&
+      (state.q === '' || c.name.toLowerCase().includes(state.q))
+    );
+    data = sortRows(data);
+    document.getElementById('count').textContent = data.length + (data.length === 1 ? ' client' : ' clients');
+    updateFilterUI();
+
+    const list = document.getElementById('list');
+    list.classList.toggle('nostripe', state.group === 'status');
+    if (!data.length) { list.innerHTML = emptyRow('Try adjusting your search or filters.'); return; }
+    if (state.group === 'none') { list.innerHTML = data.map(rowHtml).join(''); return; }
+    const groups = {};
+    data.forEach((c) => { (groups[c.status] = groups[c.status] || []).push(c); });
+    list.innerHTML = STATUS_ORDER.filter((k) => groups[k]).map((k) => groupHead(STATUS[k][1], groups[k]) + groups[k].map(rowHtml).join('')).join('');
+  }
+
+  document.getElementById('sort').addEventListener('change', (e) => { state.sort = e.target.value; render(); });
+  document.getElementById('group').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; state.group = b.dataset.group; syncControls(); render(); });
+  document.getElementById('filters').addEventListener('click', (e) => { const c = e.target.closest('.fchip'); if (!c) return; state.filter = c.dataset.status; syncControls(); render(); });
+  document.getElementById('activefilters').addEventListener('click', (e) => { const b = e.target.closest('[data-clear]'); if (!b) return; if (b.dataset.clear === 'group') state.group = 'none'; else state.filter = 'all'; syncControls(); render(); });
+  document.getElementById('resetFilters').addEventListener('click', () => { state.filter = 'all'; state.sort = 'outstanding'; state.group = 'none'; syncControls(); render(); });
+
+  document.getElementById('search').addEventListener('input', (e) => { state.q = e.target.value.trim().toLowerCase(); render(); });
+  render();
+</script>
+<script src="assets/shell.js"></script>
+<script src="assets/menu.js"></script>
+</body>
+</html>

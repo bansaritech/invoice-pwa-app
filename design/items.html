@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Items</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+</head>
+<body data-active="items" data-title="Items" data-fab="add-item">
+<div class="app">
+  <div id="nav-side"></div>
+  <div id="nav-top"></div>
+  <main class="main">
+    <div class="page-head">
+      <div><div class="eyebrow">Catalog · 7 items</div><h1>Items</h1></div>
+      <div class="desktop-actions"><button class="btn btn-primary" onclick="openDrawer('drawer-add-item')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add item</button></div>
+    </div>
+
+    <div class="card" style="overflow:hidden">
+      <div class="lhead items"><span>Item</span><span class="r">Rate</span></div>
+      <ul class="ledger items" id="itemlist">
+        <li data-name="Consulting" data-type="Service" data-rate="2500"><div><div class="who">Consulting</div></div><div class="amt num" style="align-self:center"><span class="rupee">₹</span>2,500</div><div class="statusbar s-service"><b>Service</b></div></li>
+        <li data-name="Design work" data-type="Service" data-rate="1800"><div><div class="who">Design work</div></div><div class="amt num" style="align-self:center"><span class="rupee">₹</span>1,800</div><div class="statusbar s-service"><b>Service</b></div></li>
+        <li data-name="Website maintenance" data-type="Service" data-rate="12000"><div><div class="who">Website maintenance</div><div class="meta">Monthly</div></div><div class="amt num" style="align-self:center"><span class="rupee">₹</span>12,000</div><div class="statusbar s-service"><b>Service</b></div></li>
+        <li data-name="Hosting (annual)" data-type="Product" data-rate="6000"><div><div class="who">Hosting (annual)</div></div><div class="amt num" style="align-self:center"><span class="rupee">₹</span>6,000</div><div class="statusbar s-product"><b>Product</b></div></li>
+        <li data-name="Logo design" data-type="Service" data-rate="15000"><div><div class="who">Logo design</div></div><div class="amt num" style="align-self:center"><span class="rupee">₹</span>15,000</div><div class="statusbar s-service"><b>Service</b></div></li>
+        <li data-name="Printed brochure" data-type="Product" data-rate="45"><div><div class="who">Printed brochure</div></div><div class="amt num" style="align-self:center"><span class="rupee">₹</span>45</div><div class="statusbar s-product"><b>Product</b></div></li>
+        <li data-name="Exercise book" data-type="Product" data-rate="30"><div><div class="who">Exercise book</div></div><div class="amt num" style="align-self:center"><span class="rupee">₹</span>30</div><div class="statusbar s-product"><b>Product</b></div></li>
+      </ul>
+    </div>
+  </main>
+  <div id="nav-bot"></div>
+</div>
+
+<!-- Add item drawer -->
+<aside class="drawer" id="drawer-add-item" role="dialog" aria-label="Add item">
+  <div class="drawer-head">
+    <div><h3>Add item</h3><div class="sub">Reusable product or service</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Item name</span><input class="input" placeholder="e.g. Consulting" /></label>
+    <label class="field"><span class="lab">Type</span><select class="input"><option>Service</option><option>Product</option></select></label>
+    <label class="field"><span class="lab">Rate (₹)</span><input class="input num" placeholder="0.00" /></label>
+    <label class="field" style="margin:0"><span class="lab">Notes (optional)</span><textarea class="input" placeholder="Anything to remember about this item…"></textarea></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button>
+    <button class="btn btn-primary" onclick="closeDrawer()">Add item</button>
+  </div>
+</aside>
+
+<!-- Edit item drawer -->
+<aside class="drawer" id="drawer-edit-item" role="dialog" aria-label="Edit item">
+  <div class="drawer-head">
+    <div><h3>Edit item</h3><div class="sub" id="ei-title">—</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Item name</span><input class="input" id="ei-name" /></label>
+    <label class="field"><span class="lab">Type</span><select class="input" id="ei-type"><option>Service</option><option>Product</option></select></label>
+    <label class="field"><span class="lab">Rate (₹)</span><input class="input num" id="ei-rate" /></label>
+    <label class="field" style="margin:0"><span class="lab">Notes (optional)</span><textarea class="input" placeholder="Anything to remember about this item…"></textarea></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" style="color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Delete</button>
+    <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closeDrawer()">Save changes</button>
+  </div>
+</aside>
+
+<script src="assets/drawer.js"></script>
+<script src="assets/shell.js"></script>
+<script src="assets/menu.js"></script>
+<script>
+  document.getElementById('itemlist').addEventListener('click', (e) => {
+    const li = e.target.closest('li'); if (!li) return;
+    document.getElementById('ei-title').textContent = li.dataset.name;
+    document.getElementById('ei-name').value = li.dataset.name;
+    document.getElementById('ei-type').value = li.dataset.type;
+    document.getElementById('ei-rate').value = li.dataset.rate;
+    openDrawer('drawer-edit-item');
+  });
+</script>
+</body>
+</html>

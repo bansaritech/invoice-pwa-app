@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nocturne — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0B0E14; --panel:#151A23; --panel-2:#1C2330; --line:#242C3A;
+  --tx:#EAF0FA; --tx-2:#8B97AD; --tx-3:#5C6577;
+  --mint:#57F2C4; --violet:#9B8CFF; --amber:#F5B851; --red:#FF6B6B;
+  --ui:'Manrope',sans-serif; --hd:'Sora',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--ui);font-size:15px;line-height:1.45;
+  background-image:radial-gradient(60% 40% at 80% -5%, rgba(87,242,196,.10), transparent 60%),radial-gradient(50% 40% at 0% 10%, rgba(155,140,255,.10), transparent 60%);
+  min-height:100vh;-webkit-font-smoothing:antialiased}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.app{max-width:520px;margin:0 auto;padding:20px 18px 40px}
+@media(min-width:900px){.app{max-width:1180px;padding:34px 40px}}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.brand{font-family:var(--hd);font-weight:800;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.brand .m{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--mint),var(--violet));color:#0B0E14;display:grid;place-items:center;font-weight:800}
+.top .sp{flex:1}
+.pill{border:1px solid var(--line);background:var(--panel);border-radius:12px;height:42px;width:42px;display:grid;place-items:center;color:var(--tx-2)}
+.head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+.ey{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx-3)}
+h1{font-family:var(--hd);font-weight:800;font-size:clamp(28px,7vw,40px);letter-spacing:-.03em;margin-top:6px}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:transparent;color:var(--tx-2);font-family:var(--ui);font-weight:700;font-size:13px;padding:7px 15px;border-radius:9px;cursor:pointer}
+.seg button.on{background:linear-gradient(135deg,rgba(87,242,196,.9),rgba(155,140,255,.9));color:#0B0E14}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+@media(min-width:900px){.kpis{grid-template-columns:repeat(4,1fr);gap:14px}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px}
+.kpi{padding:18px}
+.kpi .l{font-size:12px;color:var(--tx-2);font-weight:600;display:flex;gap:7px;align-items:center}
+.kpi .l i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.kpi .v{font-size:clamp(22px,6vw,28px);font-weight:500;margin-top:12px}
+.kpi .d{font-size:11.5px;margin-top:6px;font-weight:600;color:var(--tx-3)}
+.kpi.hero{grid-column:span 2;background:linear-gradient(135deg,#141A26,#10202A);border-color:rgba(87,242,196,.25);position:relative;overflow:hidden}
+@media(min-width:900px){.kpi.hero{grid-column:span 1}}
+.kpi.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(87,242,196,.35),transparent 65%)}
+.kpi.hero .v{color:var(--mint)}
+.up{color:var(--mint)!important}.down{color:var(--red)!important}
+.grid{display:grid;gap:16px;margin-top:20px}
+@media(min-width:900px){.grid{grid-template-columns:1.5fr 1fr}}
+.sec{padding:20px}
+.sec h2{font-family:var(--hd);font-size:16px;font-weight:700;margin-bottom:4px}
+.sec .cap{font-family:var(--mono);font-size:11px;color:var(--tx-3);margin-bottom:16px}
+.chart{display:flex;align-items:flex-end;gap:8px;height:150px}
+.chart .b{flex:1;display:grid;gap:8px;align-items:end;text-align:center}
+.chart .b .c{width:100%;border-radius:7px;background:linear-gradient(180deg,var(--mint),rgba(87,242,196,.15));box-shadow:0 0 16px rgba(87,242,196,.25);animation:g 1s cubic-bezier(.2,.8,.2,1) both}
+.chart .b.dim .c{background:var(--panel-2);box-shadow:none}
+.chart .b .m{font-family:var(--mono);font-size:9.5px;color:var(--tx-3)}
+@keyframes g{from{transform:scaleY(0);transform-origin:bottom}to{transform:scaleY(1)}}
+.rings{display:flex;gap:18px;align-items:center}
+.ring{width:118px;height:118px;transform:rotate(-90deg);flex-shrink:0}
+.ring circle{fill:none;stroke-width:14;stroke-linecap:round}
+.leg{list-style:none;display:grid;gap:12px;flex:1}
+.leg li{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center}
+.leg .s{width:10px;height:10px;border-radius:3px}
+.leg .k{font-size:12.5px;color:var(--tx-2);font-weight:600}
+.leg .n{font-size:13px;font-weight:500}
+.list{list-style:none;margin-top:6px}
+.list li{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.list li:last-child{border:0}
+.list .w{font-weight:700;font-size:14px}
+.list .mt{font-family:var(--mono);font-size:11.5px;color:var(--tx-3)}
+.list .a{font-weight:500;text-align:right}
+.tag{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;justify-self:end}
+.tag.paid{background:rgba(87,242,196,.14);color:var(--mint)}
+.tag.due{background:rgba(245,184,81,.14);color:var(--amber)}
+.tag.over{background:rgba(255,107,107,.14);color:var(--red)}
+.tag.draft{background:var(--panel-2);color:var(--tx-2)}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sh a{color:var(--mint);font-size:13px;font-weight:600;text-decoration:none}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--tx-2);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:18px}
+</style>
+</head>
+<body>
+<div class="app">
+  <a class="back" href="variants.html">‹ All directions</a>
+  <div class="top">
+    <div class="brand"><span class="m">₹</span> Nocturne</div>
+    <span class="sp"></span>
+    <span class="pill">🔍</span>
+    <span class="pill" style="background:linear-gradient(135deg,var(--mint),var(--violet));color:#0B0E14;font-weight:800">BT</span>
+  </div>
+
+  <div class="head">
+    <div><div class="ey">Wed · 03 Sep 2026</div><h1>Overview</h1></div>
+    <div class="seg"><button class="on">Month</button><button>Year</button></div>
+  </div>
+
+  <div class="kpis">
+    <div class="card kpi hero"><div class="l">Revenue · September</div><div class="v num">₹4,82,600</div><div class="d up">▲ 12.4% vs Aug</div></div>
+    <div class="card kpi"><div class="l"><i style="background:var(--amber)"></i>Outstanding</div><div class="v num">₹1,36,200</div><div class="d">9 invoices</div></div>
+    <div class="card kpi"><div class="l"><i style="background:var(--red)"></i>Overdue</div><div class="v num">₹58,400</div><div class="d down">3 past due</div></div>
+    <div class="card kpi"><div class="l"><i style="background:var(--mint)"></i>Collected</div><div class="v num">₹3,46,400</div><div class="d up">▲ 8 payments</div></div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card sec">
+        <div class="sh"><div><h2>Collections</h2></div><a href="#">6 months →</a></div>
+        <div class="chart">
+          <div class="b dim"><div class="c" style="height:52%"></div><div class="m">Apr</div></div>
+          <div class="b dim"><div class="c" style="height:68%"></div><div class="m">May</div></div>
+          <div class="b dim"><div class="c" style="height:47%"></div><div class="m">Jun</div></div>
+          <div class="b dim"><div class="c" style="height:74%"></div><div class="m">Jul</div></div>
+          <div class="b dim"><div class="c" style="height:61%"></div><div class="m">Aug</div></div>
+          <div class="b"><div class="c" style="height:90%"></div><div class="m">Sep</div></div>
+        </div>
+      </div>
+      <div class="card sec" style="margin-top:16px">
+        <div class="sh"><h2>Recent invoices</h2><a href="#">All →</a></div>
+        <ul class="list">
+          <li><span><div class="w">Acme Traders</div><div class="mt">INV-2026-042 · 02 Sep</div></span><span class="a num">₹88,500</span><span class="tag due">Partial</span></li>
+          <li><span><div class="w">Northstar Supplies</div><div class="mt">INV-2026-041 · 31 Aug</div></span><span class="a num">₹1,24,000</span><span class="tag over">Overdue</span></li>
+          <li><span><div class="w">Bluebird Studio</div><div class="mt">INV-2026-040 · 29 Aug</div></span><span class="a num">₹36,900</span><span class="tag paid">Paid</span></li>
+          <li><span><div class="w">Meridian Foods</div><div class="mt">INV-2026-039 · 27 Aug</div></span><span class="a num">₹52,300</span><span class="tag draft">Draft</span></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card sec">
+        <h2>Where it sits</h2><div class="cap">of ₹4,82,600 billed</div>
+        <div class="rings">
+          <svg class="ring" viewBox="0 0 118 118">
+            <circle cx="59" cy="59" r="50" stroke="var(--panel-2)"></circle>
+            <circle cx="59" cy="59" r="50" stroke="var(--mint)" stroke-dasharray="225 89" stroke-dashoffset="0"></circle>
+            <circle cx="59" cy="59" r="50" stroke="var(--amber)" stroke-dasharray="51 263" stroke-dashoffset="-225"></circle>
+            <circle cx="59" cy="59" r="50" stroke="var(--red)" stroke-dasharray="38 276" stroke-dashoffset="-276"></circle>
+          </svg>
+          <ul class="leg">
+            <li><span class="s" style="background:var(--mint)"></span><span class="k">Collected</span><span class="n num">₹3,46,400</span></li>
+            <li><span class="s" style="background:var(--amber)"></span><span class="k">Outstanding</span><span class="n num">₹77,800</span></li>
+            <li><span class="s" style="background:var(--red)"></span><span class="k">Overdue</span><span class="n num">₹58,400</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card sec" style="margin-top:16px">
+        <h2 style="margin-bottom:14px">This month</h2>
+        <ul class="leg">
+          <li><span></span><span class="k">Invoices raised</span><span class="n num">18</span></li>
+          <li><span></span><span class="k">Avg days to pay</span><span class="n num">11.2</span></li>
+          <li><span></span><span class="k">GST collected</span><span class="n num">₹62,340</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelector('.seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b));});
+</script>
+</body>
+</html>

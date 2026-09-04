@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Set up</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+<style>
+  .setup { min-height: 100vh; display: flex; flex-direction: column; max-width: 520px; margin: 0 auto; }
+  .setup .bar { display: flex; align-items: center; gap: 12px; padding: 20px 22px; }
+  .setup .bar .spacer { flex: 1; }
+  .steps { display: flex; gap: 8px; padding: 0 22px 8px; }
+  .steps .s { flex: 1; height: 4px; border-radius: 4px; background: var(--line-2); transition: .25s; }
+  .steps .s.on { background: var(--accent); }
+  .setup main { flex: 1; padding: 14px 22px 30px; }
+  .step { display: none; }
+  .step.on { display: block; animation: rise .4s ease both; }
+  .step .eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--ink-3); }
+  .step h1 { font-size: clamp(24px, 6vw, 30px); letter-spacing: -0.03em; margin: 6px 0 4px; font-weight: 800; }
+  .step .sub { color: var(--ink-2); font-size: 14px; margin-bottom: 22px; }
+  .setup .foot { display: flex; gap: 10px; padding: 16px 22px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+  .setup .foot .btn { flex: 1; justify-content: center; height: 48px; }
+</style>
+</head>
+<body>
+<div class="setup">
+  <div class="bar">
+    <div class="wordmark"><span class="mark">₹</span> Ledger</div>
+    <span class="spacer"></span>
+    <button class="iconbtn" aria-label="Toggle theme" onclick="toggleTheme()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></button>
+  </div>
+  <div class="steps"><span class="s on"></span><span class="s"></span><span class="s"></span></div>
+
+  <main>
+    <section class="step on" data-step="0">
+      <div class="eyebrow">Step 1 of 3</div>
+      <h1>Your business</h1>
+      <p class="sub">This appears on every invoice you send.</p>
+      <label class="field"><span class="lab">Business name</span><input class="input" placeholder="e.g. Bansari Tech" /></label>
+      <label class="field"><span class="lab">GSTIN <span style="color:var(--ink-3);font-weight:500">(optional)</span></span><input class="input num" placeholder="24AABCB1234Z1Z5" /></label>
+      <label class="field" style="margin:0"><span class="lab">Address</span><textarea class="input" placeholder="Billing address…"></textarea></label>
+    </section>
+
+    <section class="step" data-step="1">
+      <div class="eyebrow">Step 2 of 3</div>
+      <h1>Tax & invoicing</h1>
+      <p class="sub">Set your defaults — you can change these anytime.</p>
+      <div class="grid-2">
+        <label class="field"><span class="lab">Default GST %</span><input class="input num" value="18" /></label>
+        <label class="field"><span class="lab">Payment terms</span><select class="input"><option>Net 15</option><option>Net 30</option><option>Due on receipt</option></select></label>
+      </div>
+      <label class="field"><span class="lab">Invoice number format</span><input class="input num" value="INV-{YYYY}-{###}" /></label>
+      <label class="field" style="margin:0"><span class="lab">Currency</span><select class="input"><option>Indian Rupee (₹)</option></select></label>
+    </section>
+
+    <section class="step" data-step="2">
+      <div class="eyebrow">Step 3 of 3</div>
+      <h1>Connect your data</h1>
+      <p class="sub">Your invoices live in a private GitHub repo you control. The token is encrypted on this device.</p>
+      <label class="field"><span class="lab">Repository</span><input class="input num" placeholder="owner/repository" /></label>
+      <div class="grid-2">
+        <label class="field"><span class="lab">Branch</span><input class="input num" value="main" /></label>
+        <label class="field"><span class="lab">Access token</span><input class="input" type="password" placeholder="ghp_…" /></label>
+      </div>
+      <div class="card card-pad" style="display:flex;gap:12px;align-items:flex-start;background:color-mix(in srgb,var(--accent) 6%,transparent);border-color:color-mix(in srgb,var(--accent) 25%,transparent)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div style="font-size:12.5px;color:var(--ink-2)">Use a fine-grained token with <b>Contents: Read &amp; write</b>. It's encrypted with a non-extractable key and never shown again.</div>
+      </div>
+    </section>
+  </main>
+
+  <div class="foot">
+    <button class="btn btn-ghost" id="back" style="display:none">Back</button>
+    <button class="btn btn-primary" id="next">Continue</button>
+  </div>
+</div>
+
+<script>
+  let i = 0;
+  const steps = [...document.querySelectorAll('.step')];
+  const bars = [...document.querySelectorAll('.steps .s')];
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  function show() {
+    steps.forEach((s, n) => s.classList.toggle('on', n === i));
+    bars.forEach((b, n) => b.classList.toggle('on', n <= i));
+    back.style.display = i === 0 ? 'none' : '';
+    next.textContent = i === steps.length - 1 ? 'Finish setup' : 'Continue';
+  }
+  next.addEventListener('click', () => { if (i < steps.length - 1) { i++; show(); } else { window.location = 'dashboard.html'; } });
+  back.addEventListener('click', () => { if (i > 0) { i--; show(); } });
+  show();
+</script>
+</body>
+</html>
