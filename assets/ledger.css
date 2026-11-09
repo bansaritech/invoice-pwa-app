@@ -184,7 +184,7 @@ button { font-family: inherit; cursor: pointer; }
 .botnav .fab-slot { position: relative; }
 
 /* ---------- Page header ---------- */
-.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin: 6px 0 20px; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; margin: 6px 0 20px; flex-wrap: wrap; }
 .page-head .eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--ink-3); }
 .page-head h1 { font-size: clamp(26px, 7vw, 36px); margin: 4px 0 0; letter-spacing: -0.03em; font-weight: 800; }
 

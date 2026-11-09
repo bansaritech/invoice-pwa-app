@@ -32,7 +32,7 @@ function paint() {
   const itemMode = draft.taxMode === 'item';
   rootRef.innerHTML = `
     <div class="page-head"><div><div class="eyebrow">${draft.status === 'draft' ? 'Draft' : 'Edit'}</div><h1>${esc(draft.number)}</h1></div>
-      <div class="desktop-actions"><a class="btn btn-ghost" href="#/invoices">Cancel</a><button class="btn btn-primary" id="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12l5 5 9-11"/></svg> Save invoice</button></div>
+      <div class="page-actions"><a class="btn btn-ghost" href="#/invoices">Cancel</a><button class="btn btn-primary" id="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg> Save invoice</button></div>
     </div>
     <div class="editor-grid">
       <div>
@@ -53,7 +53,7 @@ function paint() {
         <div class="card card-pad" style="margin-top:14px">
           <div class="section-head" style="margin-bottom:10px"><h2>Items</h2><span class="period-note">${draft.lines.length} ${draft.lines.length === 1 ? 'line' : 'lines'}</span></div>
           <ul class="ledger" id="lineList" style="margin:0 -18px">${lineRows(itemMode)}</ul>
-          <button class="btn btn-primary" id="addline" style="width:100%;justify-content:center;margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add item</button>
+          <button class="btn btn-primary" id="addline" style="width:100%;justify-content:center;margin-top:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v15m7.5-7.5h-15"/></svg> Add item</button>
         </div>
 
         <div class="card card-pad" style="margin-top:14px"><label class="field" style="margin:0"><span class="lab">Notes / terms</span><textarea class="input" id="notes">${esc(draft.notes || '')}</textarea></label></div>
