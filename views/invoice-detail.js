@@ -32,7 +32,7 @@ export function render(root, hash) {
     <div class="page-head">
       <div><div class="eyebrow"><a href="#/invoices" style="color:var(--accent)">← Invoices</a></div><h1 style="font-size:28px">${esc(inv.number)}</h1>
         <div class="period-note" style="margin-top:4px"><span class="chip ${CHIP[st]}" style="height:22px">${st}</span></div></div>
-      <div class="desktop-actions"><button class="btn btn-ghost" id="print">Print / PDF</button><a class="btn btn-primary" href="#/invoice/${encodeURIComponent(inv.number)}/edit">Edit invoice</a></div>
+      <div class="desktop-actions"><button class="btn btn-ghost" id="del" style="color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Delete</button><button class="btn btn-ghost" id="print">Print / PDF</button><a class="btn btn-primary" href="#/invoice/${encodeURIComponent(inv.number)}/edit">Edit invoice</a></div>
     </div>
     <div class="split">
       <div>
@@ -70,6 +70,11 @@ export function render(root, hash) {
 
   root.querySelector('#rec').addEventListener('click', () => openPay('new', null));
   root.querySelector('#print').addEventListener('click', () => printInvoice(current, store.settings()));
+  root.querySelector('#del').addEventListener('click', () => {
+    if (!confirm(`Delete invoice ${current.number}? This cannot be undone.`)) return;
+    location.hash = '#/invoices';
+    store.removeInvoice(current.number);
+  });
   root.querySelector('#paylist').addEventListener('click', (e) => {
     const li = e.target.closest('li[data-id]');
     if (!li) return;

@@ -620,3 +620,6 @@ body.onboarding .main { max-width: none; margin: 0; padding: 0; min-height: 100v
 .imgdrop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .imgdrop img { max-height: 120px; max-width: 100%; border-radius: 8px; }
 #appicon-thumb svg { width: 19px; height: 19px; }
+
+/* ---------- Delete guard error ---------- */
+.del-err { margin-top: 14px; padding: 12px 14px; border-radius: 12px; font-size: 12.5px; line-height: 1.6; color: var(--over); background: color-mix(in srgb, var(--over) 10%, transparent); border: 1px solid color-mix(in srgb, var(--over) 30%, transparent); word-break: break-word; }

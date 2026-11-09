@@ -1,5 +1,5 @@
 import * as store from '../lib/store.js';
-import { paidOf, balanceOf, aging } from '../lib/domain.js';
+import { paidOf, balanceOf, aging, clientDues } from '../lib/domain.js';
 import { money, esc, fmtDate, invoiceStatus } from '../lib/format.js';
 
 const initials = (n) => (n || '?').split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
@@ -70,6 +70,20 @@ export function render(root, hash) {
     const upd = { ...current, name: root.querySelector('#ec-name').value.trim() || current.name, gstin: root.querySelector('#ec-gstin').value.trim(), phone: root.querySelector('#ec-phone').value.trim(), email: root.querySelector('#ec-email').value.trim() };
     window.closeDrawer(); store.upsertClient(upd);
   });
+  root.querySelector('#ec-del').addEventListener('click', () => {
+    const dues = clientDues(store.invoices(), current.id);
+    const err = root.querySelector('#ec-err');
+    if (dues.length) {
+      const total = dues.reduce((s, i) => s + balanceOf(i), 0);
+      err.innerHTML = `<b>Can’t delete — ${money(total)} pending on ${dues.length} ${dues.length === 1 ? 'invoice' : 'invoices'}:</b><br>${dues.map((i) => esc(i.number) + ' (' + money(balanceOf(i), i.currency) + ')').join(', ')}`;
+      err.style.display = '';
+      return;
+    }
+    if (!confirm(`Delete client “${current.name}”? Settled invoices stay, but the client will be removed. This cannot be undone.`)) return;
+    window.closeDrawer();
+    location.hash = '#/clients';
+    store.removeClient(current.id);
+  });
 }
 
 function stRow(i) {
@@ -88,7 +102,8 @@ function editDrawer(c) {
       <label class="field"><span class="lab">Business / party name</span><input class="input" id="ec-name" value="${esc(c.name || '')}" /></label>
       <label class="field"><span class="lab">GSTIN</span><input class="input num" id="ec-gstin" value="${esc(c.gstin || '')}" /></label>
       <div class="grid-2"><label class="field"><span class="lab">Phone</span><input class="input num" id="ec-phone" value="${esc(c.phone || '')}" /></label><label class="field"><span class="lab">Email</span><input class="input" id="ec-email" value="${esc(c.email || '')}" /></label></div>
+      <div id="ec-err" class="del-err" style="display:none"></div>
     </div>
-    <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" id="ec-save" style="flex:1;justify-content:center">Save changes</button></div>
+    <div class="drawer-foot"><button class="btn btn-ghost" id="ec-del" style="color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Delete</button><button class="btn btn-primary" id="ec-save" style="flex:1;justify-content:center">Save changes</button></div>
   </aside>`;
 }

@@ -1,5 +1,6 @@
 import * as store from '../lib/store.js';
 import { money, esc } from '../lib/format.js';
+import { invoicesUsingItem } from '../lib/domain.js';
 
 let editId = null;
 
@@ -32,6 +33,7 @@ function drawer() {
       <label class="field"><span class="lab">Item name</span><input class="input" id="it-name" placeholder="e.g. Consulting" /></label>
       <label class="field"><span class="lab">Type</span><select class="input" id="it-type"><option value="service">Service</option><option value="product">Product</option></select></label>
       <label class="field" style="margin:0"><span class="lab">Rate (₹)</span><input class="input num" id="it-rate" placeholder="0.00" /></label>
+      <div id="it-err" class="del-err" style="display:none"></div>
     </div>
     <div class="drawer-foot"><button class="btn btn-ghost" id="it-del" style="color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Delete</button><button class="btn btn-primary" id="it-save" style="flex:1;justify-content:center">Save</button></div>
   </aside>`;
@@ -40,6 +42,7 @@ function drawer() {
 function open(id) {
   editId = id;
   const it = id ? store.items().find((x) => x.id === id) : null;
+  document.getElementById('it-err').style.display = 'none';
   document.getElementById('it-h').textContent = it ? 'Edit item' : 'Add item';
   document.getElementById('it-del').style.display = it ? '' : 'none';
   document.getElementById('it-name').value = it ? it.name : '';
@@ -52,4 +55,17 @@ function save() {
   store.upsertItem({ id: editId || 'it_' + Date.now(), name, type: document.getElementById('it-type').value, rate: +document.getElementById('it-rate').value || 0 });
   window.closeDrawer();
 }
-function del() { if (editId) store.removeItem(editId); window.closeDrawer(); }
+function del() {
+  if (!editId) { window.closeDrawer(); return; }
+  const it = store.items().find((x) => x.id === editId);
+  const used = invoicesUsingItem(store.invoices(), it);
+  if (used.length) {
+    const err = document.getElementById('it-err');
+    err.innerHTML = `<b>Can’t delete — used on ${used.length} ${used.length === 1 ? 'invoice' : 'invoices'}:</b><br>${used.map((i) => esc(i.number)).join(', ')}`;
+    err.style.display = '';
+    return;
+  }
+  if (!confirm(`Delete item “${it.name}”? This cannot be undone.`)) return;
+  store.removeItem(editId);
+  window.closeDrawer();
+}
