@@ -7,7 +7,7 @@ let editId = null;
 export function render(root) {
   root.innerHTML = `
     <div class="page-head"><div><div class="eyebrow">Catalog · ${store.items().length} items</div><h1>Items</h1></div>
-      <div class="desktop-actions"><button class="btn btn-primary" id="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add item</button></div>
+      <div class="page-actions"><button class="btn btn-primary" id="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5v15m7.5-7.5h-15"/></svg> Add item</button></div>
     </div>
     <div class="card items-card" style="overflow:hidden">
       <div class="lhead items"><span>Item</span><span class="r">Rate</span></div>

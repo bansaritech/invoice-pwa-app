@@ -169,12 +169,13 @@ button { font-family: inherit; cursor: pointer; }
   border-top: 1px solid var(--line);
   padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
 }
-.botnav a {
+.botnav a, .botnav button {
   display: grid; justify-items: center; gap: 3px; padding: 6px 0;
   font-size: 10.5px; font-weight: 600; letter-spacing: .01em; color: var(--ink-3);
   position: relative; transition: .18s;
+  background: none; border: 0; font-family: inherit; cursor: pointer;
 }
-.botnav a svg { width: 21px; height: 21px; }
+.botnav a svg, .botnav button svg { width: 21px; height: 21px; }
 .botnav a.active { color: var(--ink); }
 .botnav a.active::before {
   content: ''; position: absolute; top: -8px; width: 26px; height: 3px;
@@ -599,6 +600,19 @@ textarea.input { height: auto; padding: 12px 14px; resize: vertical; min-height:
   .desktop-actions { display: flex; }
   .mobile-only { display: none !important; }
 }
+
+/* Header actions that stay visible on mobile (e.g. Add client / Add item) */
+.page-actions { display: flex; gap: 10px; flex-shrink: 0; }
+
+/* More menu (mobile nav sheet) */
+.morelink {
+  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+  padding: 15px 16px; border-radius: 14px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--ink); font: inherit; font-weight: 600; font-size: 15px;
+  cursor: pointer; margin-bottom: 10px; text-decoration: none; transition: .16s;
+}
+.morelink:hover { border-color: var(--ink-3); background: var(--paper-2); }
+.morelink svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
 
 /* ---------- Onboarding (no app chrome) ---------- */
 body.onboarding .sidebar,
