@@ -60,7 +60,7 @@ export function render(root, hash) {
         </div>
       </div>
       <div>
-        <section class="section" style="margin-top:0">
+        <section class="section pay-section">
           <div class="section-head"><h2>Payments</h2><button class="btn btn-ghost" style="height:34px;padding:0 12px;font-size:13px" id="rec">+ Record</button></div>
           <div class="card"><ul class="ledger" id="paylist">${payRows(inv, cur)}</ul></div>
         </section>
