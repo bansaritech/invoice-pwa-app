@@ -76,7 +76,9 @@ export function render(root) {
       </div>
 
       <a href="#/welcome" class="btn btn-ghost" id="signout" style="width:100%;justify-content:center;margin-top:20px;color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent);text-decoration:none">Sign out</a>
-      <button class="btn btn-ghost" id="resetapp" style="width:100%;justify-content:center;margin-top:10px;color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Reset app</button>
+      <button class="btn btn-ghost" id="cleardata" style="width:100%;justify-content:center;margin-top:10px;color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Clear data</button>
+      <p class="period-note" style="text-align:center;margin:6px 0 0">Empties all invoices, items &amp; clients. Company profile &amp; settings are kept.</p>
+      <button class="btn btn-ghost" id="resetapp" style="width:100%;justify-content:center;margin-top:14px;color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Reset app</button>
       <p class="period-note" style="text-align:center;margin:6px 0 0">Clears local data &amp; disconnects this device. Your repo data is untouched.</p>
       <p style="text-align:center;color:var(--ink-3);font-family:var(--mono);font-size:11px;margin:16px 0 0">Ledger · v1.0.0</p>
     </div>
@@ -102,6 +104,10 @@ export function render(root) {
     sync.pull();
   });
   g('signout').addEventListener('click', (e) => { e.preventDefault(); store.disconnect().then(() => { location.hash = '#/welcome'; }); });
+  g('cleardata').addEventListener('click', () => {
+    if (!confirm('Clear all invoices, items and clients? Your company profile and settings are kept. This cannot be undone.')) return;
+    store.clearData().then(() => { location.hash = '#/'; });
+  });
   g('resetapp').addEventListener('click', () => {
     if (!confirm('Reset the app? This clears all local data and disconnects this device. Data already synced to your repo is not deleted.')) return;
     store.resetApp().then(() => { location.hash = '#/welcome'; location.reload(); });
