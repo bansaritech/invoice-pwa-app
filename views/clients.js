@@ -16,12 +16,44 @@ export function render(root) {
   const receivable = rows.reduce((s, r) => s + r.outstanding, 0);
 
   root.innerHTML = `
-    <div class="page-head"><div><div class="eyebrow">${store.clients().length} clients</div><h1>Clients</h1></div></div>
+    <div class="page-head"><div><div class="eyebrow">${store.clients().length} clients</div><h1>Clients</h1></div>
+      <div class="desktop-actions"><button class="btn btn-primary" id="add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add client</button></div>
+    </div>
     <div class="kpis compact" style="grid-template-columns:repeat(2,1fr)">
       <div class="card kpi"><div class="label">Total receivable</div><div class="value num">${money(receivable)}</div></div>
       <div class="card kpi"><div class="label">Clients with dues</div><div class="value num">${rows.filter((r) => r.outstanding > 0).length}</div></div>
     </div>
-    <div class="card striped" style="overflow:hidden;margin-top:6px"><ul class="clients striped">${rows.map(row).join('')}</ul></div>`;
+    <div class="card striped" style="overflow:hidden;margin-top:6px"><ul class="clients striped">${rows.map(row).join('') || '<li style="padding:14px 16px;color:var(--ink-3)">No clients yet — add your first.</li>'}</ul></div>
+    ${drawer()}`;
+
+  root.querySelector('#add').addEventListener('click', () => {
+    ['ac-name', 'ac-gstin', 'ac-phone', 'ac-email'].forEach((id) => { root.querySelector('#' + id).value = ''; });
+    window.openDrawer('drawer-addclient');
+  });
+  root.querySelector('#ac-save').addEventListener('click', () => {
+    const name = root.querySelector('#ac-name').value.trim();
+    if (!name) { window.closeDrawer(); return; }
+    store.upsertClient({
+      id: 'cl_' + Date.now(), name,
+      gstin: root.querySelector('#ac-gstin').value.trim(),
+      phone: root.querySelector('#ac-phone').value.trim(),
+      email: root.querySelector('#ac-email').value.trim(),
+      terms: 'net15', preferredCurrency: 'INR'
+    });
+    window.closeDrawer();
+  });
+}
+
+function drawer() {
+  return `<aside class="drawer" id="drawer-addclient" role="dialog" aria-label="Add client">
+    <div class="drawer-head"><div><h3>Add client</h3></div><button class="drawer-x" onclick="closeDrawer()">×</button></div>
+    <div class="drawer-body">
+      <label class="field"><span class="lab">Business / party name</span><input class="input" id="ac-name" placeholder="e.g. Acme Traders" /></label>
+      <label class="field"><span class="lab">GSTIN</span><input class="input num" id="ac-gstin" placeholder="Optional" /></label>
+      <div class="grid-2"><label class="field"><span class="lab">Phone</span><input class="input num" id="ac-phone" /></label><label class="field"><span class="lab">Email</span><input class="input" id="ac-email" /></label></div>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" id="ac-save" style="flex:1;justify-content:center">Add client</button></div>
+  </aside>`;
 }
 
 function row({ c, count, outstanding, sc, label }) {
