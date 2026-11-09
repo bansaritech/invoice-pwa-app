@@ -2,6 +2,7 @@ import * as store from '../lib/store.js';
 import * as sync from '../lib/sync.js';
 import * as secure from '../lib/secure.js';
 import { esc, formatNumber } from '../lib/format.js';
+import { DEFAULT_TEMPLATE, printInvoice } from '../lib/invoice-template.js';
 
 const g = (id) => document.getElementById(id);
 function save(mut) { const s = JSON.parse(JSON.stringify(store.settings())); mut(s); store.saveSettings(s); }
@@ -63,6 +64,7 @@ export function render(root) {
           <li class="set-row tap" data-open="appicon"><span class="ic" id="appicon-thumb" style="background:${thumbBg(s.branding.appIcon)};color:${thumbColor(s.branding.appIcon)}">${iconThumbInner(s.branding.appIcon)}</span><span class="grow"><span class="t">App icon</span><span class="s">Installed app &amp; header mark</span></span><span class="chev">›</span></li>
           <li class="set-row tap" data-open="logo"><span class="ic">${s.branding.logo ? `<img src="${s.branding.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:8px" />` : svg('M3 3h18v18H3zM3 15l5-5 4 4 3-3 6 6')}</span><span class="grow"><span class="t">Logo</span><span class="s">Shown on invoices</span></span>${s.branding.logo ? '<span class="chip paid" style="height:22px">Set</span>' : '<span class="chev">›</span>'}</li>
           <li class="set-row tap" data-open="qr"><span class="ic">${s.branding.qr ? `<img src="${s.branding.qr}" style="width:100%;height:100%;object-fit:contain;border-radius:8px" />` : svg('M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3z')}</span><span class="grow"><span class="t">Payment QR</span><span class="s">Attached to the invoice</span></span>${s.branding.qr ? '<span class="chip paid" style="height:22px">Set</span>' : '<span class="chev">›</span>'}</li>
+          <li class="set-row tap" data-open="template"><span class="ic">${svg('M9 12h6M9 16h6M9 8h2M7 3h7l5 5v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM14 3v5h5')}</span><span class="grow"><span class="t">Invoice template</span><span class="s">Layout used for printing</span></span>${s.branding.invoiceTemplate ? '<span class="chip paid" style="height:22px">Custom</span>' : '<span class="chev">›</span>'}</li>
         </ul>
       </div>
 
@@ -74,6 +76,8 @@ export function render(root) {
       </div>
 
       <a href="#/welcome" class="btn btn-ghost" id="signout" style="width:100%;justify-content:center;margin-top:20px;color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent);text-decoration:none">Sign out</a>
+      <button class="btn btn-ghost" id="resetapp" style="width:100%;justify-content:center;margin-top:10px;color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Reset app</button>
+      <p class="period-note" style="text-align:center;margin:6px 0 0">Clears local data &amp; disconnects this device. Your repo data is untouched.</p>
       <p style="text-align:center;color:var(--ink-3);font-family:var(--mono);font-size:11px;margin:16px 0 0">Ledger · v1.0.0</p>
     </div>
     ${drawers(s)}`;
@@ -98,6 +102,10 @@ export function render(root) {
     sync.pull();
   });
   g('signout').addEventListener('click', (e) => { e.preventDefault(); store.disconnect().then(() => { location.hash = '#/welcome'; }); });
+  g('resetapp').addEventListener('click', () => {
+    if (!confirm('Reset the app? This clears all local data and disconnects this device. Data already synced to your repo is not deleted.')) return;
+    store.resetApp().then(() => { location.hash = '#/welcome'; location.reload(); });
+  });
 
   // drawer saves
   g('pf-save').addEventListener('click', () => { save((x) => { x.business.name = g('pf-name').value.trim(); x.business.gstin = g('pf-gstin').value.trim(); x.business.phone = g('pf-phone').value.trim(); x.business.email = g('pf-email').value.trim(); x.business.address = g('pf-addr').value.trim(); }); window.closeDrawer(); });
@@ -145,6 +153,17 @@ export function render(root) {
   g('qr-save').addEventListener('click', () => { save((x) => x.branding.qr = qrData); window.closeDrawer(); });
   g('lg-remove').addEventListener('click', () => { save((x) => x.branding.logo = null); window.closeDrawer(); });
   g('qr-remove').addEventListener('click', () => { save((x) => x.branding.qr = null); window.closeDrawer(); });
+
+  // Branding — invoice print template
+  g('tpl-save').addEventListener('click', () => { const v = g('tpl-input').value.trim(); save((x) => x.branding.invoiceTemplate = v || null); window.closeDrawer(); });
+  g('tpl-reset').addEventListener('click', () => { g('tpl-input').value = DEFAULT_TEMPLATE; });
+  g('tpl-preview').addEventListener('click', () => {
+    const inv = store.invoices()[0];
+    if (!inv) { alert('Add an invoice first to preview the template.'); return; }
+    const s2 = JSON.parse(JSON.stringify(store.settings()));
+    s2.branding.invoiceTemplate = g('tpl-input').value;
+    printInvoice(inv, s2);
+  });
 }
 
 function renderSourceStatus() {
@@ -210,6 +229,15 @@ function drawers(s) {
     <div class="drawer-head"><div><h3>Payment QR</h3><div class="sub">Attached to the invoice</div></div><button class="drawer-x" onclick="closeDrawer()">×</button></div>
     <div class="drawer-body"><label class="imgdrop"><span id="qr-drop">${s.branding.qr ? `<img src="${s.branding.qr}" />` : 'Drop an image or browse<br><span class="period-note">PNG, JPG, SVG</span>'}</span><input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" id="qr-file" /></label></div>
     <div class="drawer-foot"><button class="btn btn-ghost" id="qr-remove" style="color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Remove</button><button class="btn btn-primary" id="qr-save" style="flex:1;justify-content:center">Save</button></div>
+  </aside>
+
+  <aside class="drawer drawer-wide" id="drawer-template" role="dialog" aria-label="Invoice template">
+    <div class="drawer-head"><div><h3>Invoice template</h3><div class="sub">HTML used when printing · stored in your data repo</div></div><button class="drawer-x" onclick="closeDrawer()">×</button></div>
+    <div class="drawer-body">
+      <p class="note" style="font-size:12px;color:var(--ink-3);margin:0 0 10px">Tokens: <b>{{business.name}}</b>, <b>{{business.address}}</b>, <b>{{business.gstin}}</b>, <b>{{client.name}}</b>, <b>{{invoice.number}}</b>, <b>{{invoice.date}}</b>, <b>{{total}}</b>, <b>{{balance}}</b> · logo &amp; QR via <b>{{{logoImg}}}</b> / <b>{{{qrImg}}}</b> · line items in <b>{{#lines}}…{{/lines}}</b>. Leave empty to use the built-in default.</p>
+      <label class="field" style="margin:0"><span class="lab">Template HTML</span><textarea class="input num" id="tpl-input" style="min-height:300px;font-size:12px;line-height:1.5;white-space:pre">${esc(s.branding.invoiceTemplate || DEFAULT_TEMPLATE)}</textarea></label>
+    </div>
+    <div class="drawer-foot"><button class="btn btn-ghost" id="tpl-reset">Reset to default</button><button class="btn btn-ghost" id="tpl-preview">Preview</button><button class="btn btn-primary" id="tpl-save" style="flex:1;justify-content:center">Save</button></div>
   </aside>
   ${drawerShell('profile', 'Business profile',
     `<label class="field"><span class="lab">Business name</span><input class="input" id="pf-name" value="${esc(b.name || '')}" /></label>

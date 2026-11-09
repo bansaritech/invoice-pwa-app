@@ -68,6 +68,12 @@ sync.onStatus((s, n) => {
   document.querySelectorAll('.syncpill').forEach((el) => { el.textContent = txt; });
 });
 
+// Ask the browser to keep our IndexedDB data from being evicted — otherwise a restart
+// could wipe the connection/data and force onboarding again. Best-effort; ignore failures.
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); }).catch(() => {});
+}
+
 // Hydrate the local database (seeds on first run), then render.
 try {
   await store.init();

@@ -1,6 +1,7 @@
 import * as store from '../lib/store.js';
 import { paidOf, balanceOf } from '../lib/domain.js';
 import { money, esc, fmtDate, invoiceStatus } from '../lib/format.js';
+import { printInvoice } from '../lib/invoice-template.js';
 
 const CHIP = { paid: 'paid', partial: 'partial', unpaid: 'due', overdue: 'over', draft: 'draft', cancelled: 'draft' };
 let current, curBal;
@@ -68,7 +69,7 @@ export function render(root, hash) {
     ${payDrawer(inv, cur, bal)}`;
 
   root.querySelector('#rec').addEventListener('click', () => openPay('new', null));
-  root.querySelector('#print').addEventListener('click', () => window.print());
+  root.querySelector('#print').addEventListener('click', () => printInvoice(current, store.settings()));
   root.querySelector('#paylist').addEventListener('click', (e) => {
     const li = e.target.closest('li[data-id]');
     if (!li) return;
