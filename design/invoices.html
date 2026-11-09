@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Invoices</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="wordmark"><span class="mark">₹</span> Ledger</div>
+    <a class="btn btn-primary newbtn" href="invoice-editor.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> New invoice</a>
+    <nav>
+      <a href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg> Overview</a>
+      <a class="active" href="invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h10l3 3v15H4V6zM8 9h8M8 13h8M8 17h5"/></svg> Invoices</a>
+      <a href="clients.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg> Clients</a>
+      <a href="items.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7"/></svg> Items</a>
+      <a href="payments.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v12H3zM3 11h18M7 15h4"/></svg> Payments</a>
+      <a href="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg> Reports</a>
+    </nav>
+    <div class="side-foot">
+      <button class="userchip" onclick="toggleTheme()" style="width:100%;margin-bottom:10px;cursor:pointer;text-align:left">
+        <span class="avatar" style="width:34px;height:34px;border-radius:10px;background:var(--paper-2);color:var(--accent)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></span>
+        <span><span class="nm" style="display:block" data-theme-label>Dark mode</span><span class="rl">Switch appearance</span></span>
+      </button>
+      <a href="settings.html" class="userchip"><span class="avatar" style="width:34px;height:34px;border-radius:10px">BT</span><span><span class="nm" style="display:block">Bansari Tech</span><span class="rl">Settings & profile</span></span></a>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <div class="wordmark"><span class="mark">₹</span> Ledger</div>
+    <span class="spacer"></span>
+    <button class="iconbtn" aria-label="Toggle theme" onclick="toggleTheme()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></button>
+    <button class="iconbtn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></button>
+    <span class="avatar">BT</span>
+  </header>
+
+  <main class="main">
+    <div class="page-head">
+      <div><div class="eyebrow"><span id="count">8 invoices</span> · FY 2026</div><h1>Invoices</h1></div>
+      <div class="desktop-actions"><a class="btn btn-primary" href="invoice-editor.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> New invoice</a></div>
+    </div>
+
+    <div class="toolbar">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="search" placeholder="Search invoice no. or client" /></label>
+      <button class="btn btn-ghost" onclick="openDrawer('drawer-filters')" style="height:44px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+        Filters<span id="fcount" class="fbadge" hidden></span>
+      </button>
+    </div>
+
+    <div id="activefilters" class="filter-row" style="flex-wrap:wrap;overflow:visible"></div>
+
+    <div class="card" style="overflow:hidden">
+      <div class="lhead inv"><span>Client · Invoice</span><span class="r">Amount</span></div>
+      <ul class="ledger table inv" id="list"></ul>
+    </div>
+
+  </main>
+
+  <a class="fab" href="invoice-editor.html" aria-label="New invoice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span>New invoice</span></a>
+  <nav class="botnav">
+    <a href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg> Home</a>
+    <a class="active" href="invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h10l3 3v15H4V6zM8 9h8M8 13h8"/></svg> Invoices</a>
+    <a href="clients.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg> Clients</a>
+    <a href="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7"/></svg> Reports</a>
+    <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7 7 0 0 0 0-2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-1.7-1L15 3.5h-4l-.4 2.6a7 7 0 0 0-1.7 1l-2.3-1-2 3.4L6.6 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7 7 0 0 0 1.7-1l2.3 1 2-3.4z"/></svg> More</a>
+  </nav>
+
+</div>
+
+<!-- Filters drawer -->
+<aside class="drawer" id="drawer-filters" role="dialog" aria-label="Filters">
+  <div class="drawer-head">
+    <div><h3>Filters</h3><div class="sub">Sort, group & filter</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Sort by</span>
+      <select class="input" id="sort">
+        <option value="date-desc">Newest first</option>
+        <option value="date-asc">Oldest first</option>
+        <option value="amount-desc">Amount — high to low</option>
+        <option value="amount-asc">Amount — low to high</option>
+        <option value="client">Client A–Z</option>
+      </select>
+    </label>
+    <div class="field"><span class="lab">Group by</span>
+      <div class="segment" id="group" style="display:flex;width:100%">
+        <button class="on" data-group="none" style="flex:1">None</button>
+        <button data-group="client" style="flex:1">Client</button>
+        <button data-group="status" style="flex:1">Status</button>
+      </div>
+    </div>
+    <div class="field"><span class="lab">Status</span>
+      <div class="filter-row" id="filters" style="flex-wrap:wrap;overflow:visible">
+        <button class="fchip on" data-status="all">All</button>
+        <button class="fchip" data-status="paid">Paid</button>
+        <button class="fchip" data-status="partial">Partial</button>
+        <button class="fchip" data-status="overdue">Overdue</button>
+        <button class="fchip" data-status="unpaid">Unpaid</button>
+        <button class="fchip" data-status="draft">Draft</button>
+      </div>
+    </div>
+    <label class="field"><span class="lab">Client</span><select class="input" id="client"></select></label>
+    <label class="field" style="margin:0"><span class="lab">Month</span><select class="input" id="month"></select></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" id="resetFilters">Reset</button>
+    <button class="btn btn-primary" onclick="closeDrawer()">Show results</button>
+  </div>
+</aside>
+
+<script src="assets/drawer.js"></script>
+<script>
+  const INVOICES = [
+    { client: 'Acme Traders',       no: 'INV-2026-042', date: '2026-09-02', total: 88500,  due: 44250,  status: 'partial' },
+    { client: 'Northstar Supplies', no: 'INV-2026-041', date: '2026-08-31', total: 124000, due: 124000, status: 'overdue' },
+    { client: 'Bluebird Studio',    no: 'INV-2026-040', date: '2026-08-29', total: 36900,  due: 0,      status: 'paid' },
+    { client: 'Meridian Foods',     no: 'INV-2026-039', date: '2026-08-27', total: 52300,  due: 0,      status: 'draft' },
+    { client: 'Sunrise Textiles',   no: 'INV-2026-038', date: '2026-08-24', total: 71600,  due: 0,      status: 'paid' },
+    { client: 'Patel Hardware',     no: 'INV-2026-037', date: '2026-08-21', total: 18900,  due: 18900,  status: 'unpaid' },
+    { client: 'Acme Traders',       no: 'INV-2026-034', date: '2026-08-12', total: 66000,  due: 0,      status: 'paid' },
+    { client: 'Northstar Supplies', no: 'INV-2026-030', date: '2026-07-28', total: 210000, due: 0,      status: 'paid' }
+  ];
+  const STATUS = { paid: ['paid', 'Paid'], partial: ['partial', 'Partial'], overdue: ['over', 'Overdue'], unpaid: ['due', 'Unpaid'], draft: ['draft', 'Draft'] };
+  const STATUS_ORDER = ['overdue', 'unpaid', 'partial', 'paid', 'draft'];
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const inr = new Intl.NumberFormat('en-IN');
+  const state = { filter: 'all', client: 'all', month: 'all', sort: 'date-desc', group: 'none', q: '' };
+  const emptyRow = (msg) => `<li style="display:block;padding:0;cursor:default"><div class="empty"><div class="em"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>No invoices found</h3><p>${msg}</p></div></li>`;
+
+  const fmtDate = (s) => { const d = new Date(s); return String(d.getDate()).padStart(2, '0') + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear(); };
+  const monthKey = (s) => s.slice(0, 7);
+  const monthLabel = (k) => MON[+k.slice(5, 7) - 1] + ' ' + k.slice(0, 4);
+
+  // Populate Client + Month dropdowns from the data.
+  function fillFilters() {
+    const clients = [...new Set(INVOICES.map((v) => v.client))].sort();
+    document.getElementById('client').innerHTML =
+      '<option value="all">All clients</option>' + clients.map((c) => `<option value="${c}">${c}</option>`).join('');
+    const months = [...new Set(INVOICES.map((v) => monthKey(v.date)))].sort().reverse();
+    document.getElementById('month').innerHTML =
+      '<option value="all">All months</option>' + months.map((m) => `<option value="${m}">${monthLabel(m)}</option>`).join('');
+  }
+  const money = (n) => `<span class="rupee">₹</span>${inr.format(n)}`;
+
+  function sortRows(arr) {
+    const a = [...arr];
+    const s = state.sort;
+    if (s === 'date-desc') a.sort((x, y) => y.date.localeCompare(x.date));
+    else if (s === 'date-asc') a.sort((x, y) => x.date.localeCompare(y.date));
+    else if (s === 'amount-desc') a.sort((x, y) => y.total - x.total);
+    else if (s === 'amount-asc') a.sort((x, y) => x.total - y.total);
+    else if (s === 'client') a.sort((x, y) => x.client.localeCompare(y.client));
+    return a;
+  }
+  function rowHtml(v) {
+    const [cls, label] = STATUS[v.status];
+    const dueColor = v.status === 'overdue' ? 'var(--over)' : 'var(--due)';
+    const amt = v.due > 0
+      ? `<div class="amt" style="align-self:center"><div class="num">${money(v.total)}</div><div class="meta" style="color:${dueColor};font-weight:600">${money(v.due)} due</div></div>`
+      : `<div class="amt num" style="align-self:center">${money(v.total)}</div>`;
+    // Left date block, colored to match the status.
+    const dateBlock = `<div class="dateblock s-${cls}"><b>${v.date.slice(8, 10)}</b><span>${MON[+v.date.slice(5, 7) - 1]}</span></div>`;
+    // Grouped by client → the client is in the group header, so lead with the invoice no.
+    const nameCell = state.group === 'client'
+      ? `<div><div class="who">${v.no}</div></div>`
+      : `<div><div class="who">${v.client}</div><div class="meta">${v.no}</div></div>`;
+    // Grouped by status → status is in the group header, so drop the redundant stripe.
+    const stripe = state.group === 'status' ? '' : `<div class="statusbar s-${cls}"><b>${label}</b></div>`;
+    return `<li><a href="invoice-detail.html" style="display:contents">${dateBlock}${nameCell}${amt}${stripe}</a></li>`;
+  }
+  function groupHead(label, items) {
+    const total = items.reduce((s, i) => s + i.total, 0);
+    return `<li class="group-head"><span>${label}</span><span class="gcount">${items.length} · <span class="num">${money(total)}</span></span></li>`;
+  }
+  function render() {
+    let data = INVOICES.filter((v) =>
+      (state.filter === 'all' || v.status === state.filter) &&
+      (state.client === 'all' || v.client === state.client) &&
+      (state.month === 'all' || monthKey(v.date) === state.month) &&
+      (state.q === '' || (v.number + ' ' + v.client).toLowerCase().includes(state.q))
+    );
+    data = sortRows(data);
+    document.getElementById('count').textContent = data.length + (data.length === 1 ? ' invoice' : ' invoices');
+    updateFilterUI();
+    const list = document.getElementById('list');
+    list.classList.toggle('nostripe', state.group === 'status');
+    if (!data.length) { list.innerHTML = emptyRow('Try adjusting your search or filters.'); return; }
+    if (state.group === 'none') { list.innerHTML = data.map(rowHtml).join(''); return; }
+    const groups = {};
+    data.forEach((v) => { const k = state.group === 'client' ? v.client : v.status; (groups[k] = groups[k] || []).push(v); });
+    let keys = Object.keys(groups);
+    keys = state.group === 'status' ? STATUS_ORDER.filter((k) => groups[k]) : keys.sort();
+    list.innerHTML = keys.map((k) => {
+      const label = state.group === 'status' ? STATUS[k][1] : k;
+      return groupHead(label, groups[k]) + groups[k].map(rowHtml).join('');
+    }).join('');
+  }
+
+  // Reflect state onto the drawer controls + the on-page active-filter summary.
+  function syncControls() {
+    document.getElementById('sort').value = state.sort;
+    document.getElementById('client').value = state.client;
+    document.getElementById('month').value = state.month;
+    document.querySelectorAll('#filters .fchip').forEach((x) => x.classList.toggle('on', x.dataset.status === state.filter));
+    document.querySelectorAll('#group button').forEach((x) => x.classList.toggle('on', x.dataset.group === state.group));
+  }
+  function updateFilterUI() {
+    const pills = [];
+    if (state.filter !== 'all') pills.push(['status', 'Status: ' + STATUS[state.filter][1]]);
+    if (state.client !== 'all') pills.push(['client', 'Client: ' + state.client]);
+    if (state.month !== 'all') pills.push(['month', 'Month: ' + monthLabel(state.month)]);
+    if (state.group !== 'none') pills.push(['group', 'Grouped by ' + (state.group === 'client' ? 'Client' : 'Status')]);
+    const badge = document.getElementById('fcount');
+    if (pills.length) { badge.hidden = false; badge.textContent = pills.length; } else { badge.hidden = true; }
+    document.getElementById('activefilters').innerHTML = pills.map((p) => `<button class="fchip on" data-clear="${p[0]}">${p[1]} <span aria-hidden="true">×</span></button>`).join('');
+  }
+
+  document.getElementById('sort').addEventListener('change', (e) => { state.sort = e.target.value; render(); });
+  document.getElementById('client').addEventListener('change', (e) => { state.client = e.target.value; render(); });
+  document.getElementById('month').addEventListener('change', (e) => { state.month = e.target.value; render(); });
+  document.getElementById('group').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; document.querySelectorAll('#group button').forEach((x) => x.classList.toggle('on', x === b)); state.group = b.dataset.group; render(); });
+  document.getElementById('filters').addEventListener('click', (e) => { const c = e.target.closest('.fchip'); if (!c) return; document.querySelectorAll('#filters .fchip').forEach((x) => x.classList.toggle('on', x === c)); state.filter = c.dataset.status; render(); });
+  document.getElementById('activefilters').addEventListener('click', (e) => { const b = e.target.closest('[data-clear]'); if (!b) return; const k = b.dataset.clear; if (k === 'status') state.filter = 'all'; else if (k === 'group') state.group = 'none'; else state[k] = 'all'; syncControls(); render(); });
+  document.getElementById('resetFilters').addEventListener('click', () => { state.filter = 'all'; state.client = 'all'; state.month = 'all'; state.sort = 'date-desc'; state.group = 'none'; syncControls(); render(); });
+
+  document.getElementById('search').addEventListener('input', (e) => { state.q = e.target.value.trim().toLowerCase(); render(); });
+
+  fillFilters();
+  render();
+</script>
+<script src="assets/menu.js"></script>
+</body>
+</html>

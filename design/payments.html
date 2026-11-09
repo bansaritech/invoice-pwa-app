@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Payments</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+</head>
+<body data-active="payments" data-title="Payments" data-fab="record">
+<div class="app">
+  <div id="nav-side"></div>
+  <div id="nav-top"></div>
+  <main class="main">
+    <div class="page-head">
+      <div><div class="eyebrow"><span id="count">7 payments</span> · FY 2026</div><h1>Payments</h1></div>
+      <div class="desktop-actions"><button class="btn btn-primary" onclick="openDrawer('drawer-record')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Record payment</button></div>
+    </div>
+
+    <section class="kpis compact" style="grid-template-columns:repeat(2,1fr)">
+      <div class="card kpi feature" style="grid-column:auto"><div class="label">Collected</div><div class="value num" id="k-total"><span class="rupee">₹</span>0</div><div class="delta up">this financial year</div></div>
+      <div class="card kpi"><div class="label">Payments</div><div class="value num" id="k-count">0</div><div class="delta">entries this year</div></div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="search" placeholder="Search client or invoice" /></label>
+      <button class="btn btn-ghost" onclick="openDrawer('drawer-filters')" style="height:44px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+        Filters<span id="fcount" class="fbadge" hidden></span>
+      </button>
+    </div>
+
+    <div id="activefilters" class="filter-row" style="flex-wrap:wrap;overflow:visible"></div>
+
+    <div class="card" style="overflow:hidden">
+      <div class="lhead inv"><span>Client · Invoice</span><span class="r">Amount</span></div>
+      <ul class="ledger table inv" id="list"></ul>
+    </div>
+  </main>
+  <div id="nav-bot"></div>
+</div>
+
+<!-- Filters drawer -->
+<aside class="drawer" id="drawer-filters" role="dialog" aria-label="Filters">
+  <div class="drawer-head">
+    <div><h3>Filters</h3><div class="sub">Sort, group & filter</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Sort by</span>
+      <select class="input" id="sort">
+        <option value="date-desc">Newest first</option>
+        <option value="date-asc">Oldest first</option>
+        <option value="amount-desc">Amount — high to low</option>
+        <option value="amount-asc">Amount — low to high</option>
+        <option value="client">Client A–Z</option>
+      </select>
+    </label>
+    <div class="field"><span class="lab">Group by</span>
+      <div class="segment" id="group" style="display:flex;width:100%">
+        <button class="on" data-group="none" style="flex:1">None</button>
+        <button data-group="method" style="flex:1">Method</button>
+        <button data-group="client" style="flex:1">Client</button>
+        <button data-group="month" style="flex:1">Month</button>
+      </div>
+    </div>
+    <div class="field"><span class="lab">Method</span>
+      <div class="filter-row" id="filters" style="flex-wrap:wrap;overflow:visible">
+        <button class="fchip on" data-method="all">All</button>
+        <button class="fchip" data-method="upi">UPI</button>
+        <button class="fchip" data-method="bank">Bank</button>
+        <button class="fchip" data-method="cash">Cash</button>
+        <button class="fchip" data-method="cheque">Cheque</button>
+      </div>
+    </div>
+    <label class="field"><span class="lab">Client</span><select class="input" id="client"></select></label>
+    <label class="field" style="margin:0"><span class="lab">Month</span><select class="input" id="month"></select></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" id="resetFilters">Reset</button>
+    <button class="btn btn-primary" onclick="closeDrawer()">Show results</button>
+  </div>
+</aside>
+
+<!-- Record payment drawer -->
+<aside class="drawer" id="drawer-record" role="dialog" aria-label="Record payment">
+  <div class="drawer-head">
+    <div><h3>Record payment</h3><div class="sub">Log a received payment</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Invoice</span><input class="input" list="inv" placeholder="Search invoice / client" /><datalist id="inv"><option>INV-2026-041 · Northstar Supplies</option><option>INV-2026-042 · Acme Traders</option></datalist></label>
+    <div class="grid-2">
+      <label class="field"><span class="lab">Amount (₹)</span><input class="input num" placeholder="0.00" /></label>
+      <label class="field"><span class="lab">Date</span><input class="input" type="date" value="2026-09-04" /></label>
+    </div>
+    <label class="field"><span class="lab">Method</span><select class="input"><option>UPI</option><option>Bank transfer</option><option>Cash</option><option>Cheque</option></select></label>
+    <label class="field" style="margin:0"><span class="lab">Reference (optional)</span><input class="input" placeholder="UTR / txn id" /></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button>
+    <button class="btn btn-primary" onclick="closeDrawer()">Save payment</button>
+  </div>
+</aside>
+
+<!-- Edit payment drawer -->
+<aside class="drawer" id="drawer-edit-payment" role="dialog" aria-label="Edit payment">
+  <div class="drawer-head">
+    <div><h3>Edit payment</h3><div class="sub" id="ep-title">—</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <a id="ep-invoice" href="invoice-detail.html" class="card card-pad" style="display:flex;align-items:center;gap:12px;margin-bottom:16px;text-decoration:none;color:var(--ink)">
+      <span class="ic" style="width:40px;height:40px;border-radius:11px;background:var(--paper-2);color:var(--accent);display:grid;place-items:center;flex-shrink:0"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h10l3 3v15H4V6zM8 13h8M8 17h5"/></svg></span>
+      <span style="flex:1;min-width:0"><span style="display:block;font-weight:700;font-size:13.5px" id="ep-ref">—</span><span class="period-note" id="ep-client">—</span></span>
+      <span style="color:var(--accent);font-weight:600;font-size:13px">View →</span>
+    </a>
+    <div class="grid-2">
+      <label class="field"><span class="lab">Amount (₹)</span><input class="input num" id="ep-amount" /></label>
+      <label class="field"><span class="lab">Date</span><input class="input" type="date" id="ep-date" /></label>
+    </div>
+    <label class="field"><span class="lab">Method</span><select class="input" id="ep-method"><option value="upi">UPI</option><option value="bank">Bank transfer</option><option value="cash">Cash</option><option value="cheque">Cheque</option></select></label>
+    <label class="field" style="margin:0"><span class="lab">Reference (optional)</span><input class="input" id="ep-txn" placeholder="UTR / txn id" /></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" style="color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Delete</button>
+    <button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closeDrawer()">Save changes</button>
+  </div>
+</aside>
+
+<script src="assets/drawer.js"></script>
+<script>
+  const PAYMENTS = [
+    { client: 'Bluebird Studio',    ref: 'INV-2026-040', amount: 36900,  date: '2026-09-02', method: 'upi' },
+    { client: 'Acme Traders',       ref: 'INV-2026-042', amount: 44250,  date: '2026-09-02', method: 'upi' },
+    { client: 'Sunrise Textiles',   ref: 'INV-2026-038', amount: 71600,  date: '2026-08-31', method: 'bank' },
+    { client: 'Meridian Foods',     ref: 'INV-2026-035', amount: 52300,  date: '2026-08-28', method: 'upi' },
+    { client: 'Northstar Supplies', ref: 'INV-2026-030', amount: 210000, date: '2026-08-14', method: 'bank' },
+    { client: 'Patel Hardware',     ref: 'INV-2026-031', amount: 12000,  date: '2026-08-10', method: 'cash' },
+    { client: 'Acme Traders',       ref: 'INV-2026-028', amount: 66000,  date: '2026-07-30', method: 'cheque' }
+  ];
+  // method → [color class, label]
+  const METHOD = { upi: ['paid', 'UPI'], bank: ['partial', 'Bank'], cash: ['due', 'Cash'], cheque: ['draft', 'Cheque'] };
+  const METHOD_ORDER = ['upi', 'bank', 'cash', 'cheque'];
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const inr = new Intl.NumberFormat('en-IN');
+  const money = (n) => `<span class="rupee">₹</span>${inr.format(n)}`;
+  const monthKey = (s) => s.slice(0, 7);
+  const monthLabel = (k) => MON[+k.slice(5, 7) - 1] + ' ' + k.slice(0, 4);
+  const state = { method: 'all', client: 'all', month: 'all', sort: 'date-desc', group: 'none', q: '' };
+  const emptyRow = (msg) => `<li style="display:block;padding:0;cursor:default"><div class="empty"><div class="em"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>No payments found</h3><p>${msg}</p></div></li>`;
+
+  function fillFilters() {
+    const clients = [...new Set(PAYMENTS.map((v) => v.client))].sort();
+    document.getElementById('client').innerHTML = '<option value="all">All clients</option>' + clients.map((c) => `<option value="${c}">${c}</option>`).join('');
+    const months = [...new Set(PAYMENTS.map((v) => monthKey(v.date)))].sort().reverse();
+    document.getElementById('month').innerHTML = '<option value="all">All months</option>' + months.map((m) => `<option value="${m}">${monthLabel(m)}</option>`).join('');
+  }
+  function sortRows(arr) {
+    const a = [...arr]; const s = state.sort;
+    if (s === 'date-desc') a.sort((x, y) => y.date.localeCompare(x.date));
+    else if (s === 'date-asc') a.sort((x, y) => x.date.localeCompare(y.date));
+    else if (s === 'amount-desc') a.sort((x, y) => y.amount - x.amount);
+    else if (s === 'amount-asc') a.sort((x, y) => x.amount - y.amount);
+    else if (s === 'client') a.sort((x, y) => x.client.localeCompare(y.client));
+    return a;
+  }
+  function rowHtml(p) {
+    const [cls, label] = METHOD[p.method];
+    const dateBlock = `<div class="dateblock s-${cls}"><b>${p.date.slice(8, 10)}</b><span>${MON[+p.date.slice(5, 7) - 1]}</span></div>`;
+    const nameCell = state.group === 'client'
+      ? `<div><div class="who">${p.ref}</div></div>`
+      : `<div><div class="who">${p.client}</div><div class="meta">${p.ref}</div></div>`;
+    const amt = `<div class="amt num" style="align-self:center">${money(p.amount)}</div>`;
+    const stripe = state.group === 'method' ? '' : `<div class="statusbar s-${cls}"><b>${label}</b></div>`;
+    return `<li data-client="${p.client}" data-ref="${p.ref}" data-amount="${p.amount}" data-date="${p.date}" data-method="${p.method}">${dateBlock}${nameCell}${amt}${stripe}</li>`;
+  }
+  function groupHead(label, items) {
+    const total = items.reduce((s, i) => s + i.amount, 0);
+    return `<li class="group-head"><span>${label}</span><span class="gcount">${items.length} · <span class="num">${money(total)}</span></span></li>`;
+  }
+  function groupKey(p) { return state.group === 'method' ? p.method : state.group === 'client' ? p.client : monthKey(p.date); }
+  function groupLabel(k) { return state.group === 'method' ? METHOD[k][1] : state.group === 'month' ? monthLabel(k) : k; }
+  function orderedKeys(groups) {
+    if (state.group === 'method') return METHOD_ORDER.filter((k) => groups[k]);
+    const keys = Object.keys(groups);
+    return state.group === 'month' ? keys.sort().reverse() : keys.sort();
+  }
+  function syncControls() {
+    document.getElementById('sort').value = state.sort;
+    document.getElementById('client').value = state.client;
+    document.getElementById('month').value = state.month;
+    document.querySelectorAll('#filters .fchip').forEach((x) => x.classList.toggle('on', x.dataset.method === state.method));
+    document.querySelectorAll('#group button').forEach((x) => x.classList.toggle('on', x.dataset.group === state.group));
+  }
+  function updateFilterUI() {
+    const pills = [];
+    if (state.method !== 'all') pills.push(['method', 'Method: ' + METHOD[state.method][1]]);
+    if (state.client !== 'all') pills.push(['client', 'Client: ' + state.client]);
+    if (state.month !== 'all') pills.push(['month', 'Month: ' + monthLabel(state.month)]);
+    if (state.group !== 'none') pills.push(['group', 'Grouped by ' + state.group.charAt(0).toUpperCase() + state.group.slice(1)]);
+    const badge = document.getElementById('fcount');
+    if (pills.length) { badge.hidden = false; badge.textContent = pills.length; } else { badge.hidden = true; }
+    document.getElementById('activefilters').innerHTML = pills.map((p) => `<button class="fchip on" data-clear="${p[0]}">${p[1]} <span aria-hidden="true">×</span></button>`).join('');
+  }
+  function render() {
+    const total = PAYMENTS.reduce((s, p) => s + p.amount, 0);
+    document.getElementById('k-total').innerHTML = money(total);
+    document.getElementById('k-count').textContent = PAYMENTS.length;
+
+    let data = PAYMENTS.filter((p) =>
+      (state.method === 'all' || p.method === state.method) &&
+      (state.client === 'all' || p.client === state.client) &&
+      (state.month === 'all' || monthKey(p.date) === state.month) &&
+      (state.q === '' || (p.client + ' ' + p.ref).toLowerCase().includes(state.q))
+    );
+    data = sortRows(data);
+    document.getElementById('count').textContent = data.length + (data.length === 1 ? ' payment' : ' payments');
+    updateFilterUI();
+
+    const list = document.getElementById('list');
+    list.classList.toggle('nostripe', state.group === 'method');
+    if (!data.length) { list.innerHTML = emptyRow('Try adjusting your search or filters.'); return; }
+    if (state.group === 'none') { list.innerHTML = data.map(rowHtml).join(''); return; }
+    const groups = {};
+    data.forEach((p) => { const k = groupKey(p); (groups[k] = groups[k] || []).push(p); });
+    list.innerHTML = orderedKeys(groups).map((k) => groupHead(groupLabel(k), groups[k]) + groups[k].map(rowHtml).join('')).join('');
+  }
+
+  document.getElementById('sort').addEventListener('change', (e) => { state.sort = e.target.value; render(); });
+  document.getElementById('client').addEventListener('change', (e) => { state.client = e.target.value; render(); });
+  document.getElementById('month').addEventListener('change', (e) => { state.month = e.target.value; render(); });
+  document.getElementById('group').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; state.group = b.dataset.group; syncControls(); render(); });
+  document.getElementById('filters').addEventListener('click', (e) => { const c = e.target.closest('.fchip'); if (!c) return; state.method = c.dataset.method; syncControls(); render(); });
+  document.getElementById('activefilters').addEventListener('click', (e) => { const b = e.target.closest('[data-clear]'); if (!b) return; const k = b.dataset.clear; if (k === 'group') state.group = 'none'; else if (k === 'method') state.method = 'all'; else state[k] = 'all'; syncControls(); render(); });
+  document.getElementById('resetFilters').addEventListener('click', () => { state.method = 'all'; state.client = 'all'; state.month = 'all'; state.sort = 'date-desc'; state.group = 'none'; syncControls(); render(); });
+
+  // Click a payment row → open the edit drawer, pre-filled, with the invoice shown for reference.
+  document.getElementById('list').addEventListener('click', (e) => {
+    const li = e.target.closest('li');
+    if (!li || li.classList.contains('group-head')) return;
+    const d = li.dataset;
+    document.getElementById('ep-title').textContent = d.client;
+    document.getElementById('ep-ref').textContent = d.ref;
+    document.getElementById('ep-client').textContent = d.client;
+    document.getElementById('ep-amount').value = d.amount;
+    document.getElementById('ep-date').value = d.date;
+    document.getElementById('ep-method').value = d.method;
+    openDrawer('drawer-edit-payment');
+  });
+
+  document.getElementById('search').addEventListener('input', (e) => { state.q = e.target.value.trim().toLowerCase(); render(); });
+
+  fillFilters();
+  render();
+</script>
+<script src="assets/shell.js"></script>
+<script src="assets/menu.js"></script>
+</body>
+</html>

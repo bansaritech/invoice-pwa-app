@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Overview</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="wordmark"><span class="mark">₹</span> Ledger</div>
+    <a class="btn btn-primary newbtn" href="invoice-editor.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+      New invoice
+    </a>
+    <nav>
+      <a class="active" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg> Overview</a>
+      <a href="invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h10l3 3v15H4V6zM8 9h8M8 13h8M8 17h5"/></svg> Invoices</a>
+      <a href="clients.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg> Clients</a>
+      <a href="items.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4zM3 7v10l9 4 9-4V7"/></svg> Items</a>
+      <a href="payments.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h18v12H3zM3 11h18M7 15h4"/></svg> Payments</a>
+      <a href="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg> Reports</a>
+    </nav>
+    <div class="side-foot">
+      <button class="userchip" onclick="toggleTheme()" style="width:100%;margin-bottom:10px;cursor:pointer;text-align:left">
+        <span class="avatar" style="width:34px;height:34px;border-radius:10px;background:var(--paper-2);color:var(--accent)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></span>
+        <span><span class="nm" style="display:block" data-theme-label>Dark mode</span><span class="rl">Switch appearance</span></span>
+      </button>
+      <a href="settings.html" class="userchip" style="text-decoration:none">
+        <span class="avatar" style="width:34px;height:34px;border-radius:10px">BT</span>
+        <span><span class="nm" style="display:block">Bansari Tech</span><span class="rl">Settings & profile</span></span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Mobile top bar -->
+  <header class="topbar">
+    <div class="wordmark"><span class="mark">₹</span> Ledger</div>
+    <span class="spacer"></span>
+    <button class="iconbtn" aria-label="Toggle theme" onclick="toggleTheme()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></button>
+    <button class="iconbtn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></button>
+    <span class="avatar">BT</span>
+  </header>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">Tuesday · 03 Sep 2026</div>
+        <h1>Overview</h1>
+      </div>
+      <div class="segment" id="period" role="tablist" aria-label="Summary period">
+        <button class="on" data-period="month" role="tab">Month</button>
+        <button data-period="year" role="tab">Year</button>
+      </div>
+    </div>
+
+    <!-- KPIs (period summary) -->
+    <section class="kpis compact stagger">
+      <div class="card kpi feature">
+        <div class="label">Revenue · <span id="k-period">September 2026</span></div>
+        <div class="value num"><span class="rupee">₹</span><span id="k-revenue">4,82,600</span></div>
+        <div class="delta up" id="k-delta">▲ 12.4% vs August</div>
+      </div>
+      <div class="card kpi">
+        <div class="label"><span class="dot" style="background:var(--due)"></span> Outstanding</div>
+        <div class="value num"><span class="rupee">₹</span><span id="k-outstanding">1,36,200</span></div>
+        <div class="delta" id="k-out-sub">across 9 invoices</div>
+      </div>
+      <div class="card kpi">
+        <div class="label"><span class="dot" style="background:var(--over)"></span> Overdue</div>
+        <div class="value num"><span class="rupee">₹</span><span id="k-overdue">58,400</span></div>
+        <div class="delta down" id="k-over-sub">3 invoices · past due</div>
+      </div>
+      <div class="card kpi">
+        <div class="label"><span class="dot" style="background:var(--paid)"></span> Collected</div>
+        <div class="value num"><span class="rupee">₹</span><span id="k-collected">3,46,400</span></div>
+        <div class="delta up" id="k-coll-sub">▲ 8 payments</div>
+      </div>
+    </section>
+
+    <div class="split">
+      <div>
+        <!-- Collections chart -->
+        <section class="section" style="margin-top:20px">
+          <div class="section-head"><h2 id="chart-title">Collections · by week</h2><span class="period-note" id="chart-note">September 2026</span></div>
+          <div class="card card-pad">
+            <div class="chart" id="chart"></div>
+          </div>
+        </section>
+
+        <!-- Composition donut -->
+        <section class="section">
+          <div class="section-head"><h2>Where the money is</h2><span class="period-note" id="donut-note">of ₹4,82,600 billed</span></div>
+          <div class="card card-pad">
+            <div class="donut-wrap">
+              <svg class="donut" viewBox="0 0 128 128" aria-hidden="true">
+                <circle class="track" cx="64" cy="64" r="52"></circle>
+                <circle class="donut-seg" id="seg-collected"   cx="64" cy="64" r="52" stroke="var(--c-green)"></circle>
+                <circle class="donut-seg" id="seg-outstanding" cx="64" cy="64" r="52" stroke="var(--c-blue)"></circle>
+                <circle class="donut-seg" id="seg-overdue"     cx="64" cy="64" r="52" stroke="var(--c-red)"></circle>
+              </svg>
+              <ul class="legend">
+                <li><span class="sw" style="background:var(--c-green)"></span><span class="lb">Collected</span><span class="vl num" id="lg-collected"><span class="rupee">₹</span>3,46,400</span></li>
+                <li><span class="sw" style="background:var(--c-blue)"></span><span class="lb">Outstanding</span><span class="vl num" id="lg-outstanding"><span class="rupee">₹</span>77,800</span></li>
+                <li><span class="sw" style="background:var(--c-red)"></span><span class="lb">Overdue</span><span class="vl num" id="lg-overdue"><span class="rupee">₹</span>58,400</span></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recent invoices -->
+        <section class="section">
+          <div class="section-head"><h2>Recent invoices</h2><a href="invoices.html">View all →</a></div>
+          <div class="card">
+            <ul class="ledger">
+              <li>
+                <div><div class="who">Acme Traders</div><div class="meta">INV-2026-042 · 02 Sep</div></div>
+                <div class="amt num"><span class="rupee">₹</span>88,500</div>
+                <div class="chip-wrap"><span class="chip partial">Partial</span></div>
+              </li>
+              <li>
+                <div><div class="who">Northstar Supplies</div><div class="meta">INV-2026-041 · 31 Aug</div></div>
+                <div class="amt num"><span class="rupee">₹</span>1,24,000</div>
+                <div class="chip-wrap"><span class="chip over">Overdue</span></div>
+              </li>
+              <li>
+                <div><div class="who">Bluebird Studio</div><div class="meta">INV-2026-040 · 29 Aug</div></div>
+                <div class="amt num"><span class="rupee">₹</span>36,900</div>
+                <div class="chip-wrap"><span class="chip paid">Paid</span></div>
+              </li>
+              <li>
+                <div><div class="who">Meridian Foods</div><div class="meta">INV-2026-039 · 27 Aug</div></div>
+                <div class="amt num"><span class="rupee">₹</span>52,300</div>
+                <div class="chip-wrap"><span class="chip draft">Draft</span></div>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right rail -->
+      <div>
+        <section class="section" style="margin-top:20px">
+          <div class="section-head"><h2>Top outstanding</h2><a href="clients.html">Clients →</a></div>
+          <div class="card">
+            <ul class="clients">
+              <li><span class="ini">NS</span><span class="grow"><span class="nm">Northstar Supplies</span><span class="sub">2 invoices · 14d avg</span></span><span class="bal num"><span class="rupee">₹</span>1,24,000</span></li>
+              <li><span class="ini">AT</span><span class="grow"><span class="nm">Acme Traders</span><span class="sub">1 invoice · partial</span></span><span class="bal num"><span class="rupee">₹</span>44,250</span></li>
+              <li><span class="ini">MF</span><span class="grow"><span class="nm">Meridian Foods</span><span class="sub">1 invoice</span></span><span class="bal num"><span class="rupee">₹</span>18,900</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head"><h2>This month</h2></div>
+          <div class="card card-pad">
+            <div style="display:grid;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="color:var(--ink-2);font-size:13px;font-weight:600">Invoices raised</span><span class="num" style="font-weight:600">18</span></div>
+              <div style="height:1px;background:var(--line)"></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="color:var(--ink-2);font-size:13px;font-weight:600">Avg. days to pay</span><span class="num" style="font-weight:600">11.2</span></div>
+              <div style="height:1px;background:var(--line)"></div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="color:var(--ink-2);font-size:13px;font-weight:600">GST collected</span><span class="num" style="font-weight:600"><span class="rupee">₹</span>62,340</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- FAB + bottom nav (mobile) -->
+  <a class="fab" href="invoice-editor.html" aria-label="New invoice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg><span>New invoice</span></a>
+  <nav class="botnav">
+    <a class="active" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg> Home</a>
+    <a href="invoices.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 3h10l3 3v15H4V6zM8 9h8M8 13h8"/></svg> Invoices</a>
+    <a href="clients.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 20v-2a4 4 0 0 0-8 0v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg> Clients</a>
+    <a href="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7"/></svg> Reports</a>
+    <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3 1a7 7 0 0 0-1.7-1l-.4-2.6h-4l-.4 2.6a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/></svg> More</a>
+  </nav>
+
+</div>
+
+<script>
+  const inr = new Intl.NumberFormat('en-IN');
+  const money = (n) => `<span class="rupee">₹</span>${inr.format(n)}`;
+
+  const DATA = {
+    month: {
+      period: 'September 2026',
+      revenue: '4,82,600', delta: '▲ 12.4% vs August', deltaUp: true,
+      outstanding: '1,36,200', outSub: 'across 9 invoices',
+      overdue: '58,400', overSub: '3 invoices · past due',
+      collected: '3,46,400', collSub: '▲ 8 payments',
+      chartTitle: 'Collections · by week', cls: '',
+      bars: [['W1',44],['W2',58],['W3',72],['W4',63],['W5',88]],
+      comp: { collected: 346400, outstanding: 77800, overdue: 58400 }
+    },
+    year: {
+      period: 'FY 2026',
+      revenue: '48,20,900', delta: '▲ 21.7% vs FY 2025', deltaUp: true,
+      outstanding: '3,84,500', outSub: 'across 24 invoices',
+      overdue: '1,12,300', overSub: '7 invoices · past due',
+      collected: '44,36,400', collSub: '▲ 63 payments',
+      chartTitle: 'Collections · by month', cls: 'year',
+      bars: [['Jan',40],['Feb',52],['Mar',61],['Apr',55],['May',70],['Jun',48],['Jul',76],['Aug',64],['Sep',90],['Oct',0],['Nov',0],['Dec',0]],
+      comp: { collected: 4436400, outstanding: 272200, overdue: 112300 }
+    }
+  };
+
+  const C = 2 * Math.PI * 52; // donut circumference (radius kept < viewBox so the ring isn't clipped)
+  const $ = (id) => document.getElementById(id);
+
+  function render(key) {
+    const d = DATA[key];
+    $('k-period').textContent = d.period;
+    $('k-revenue').textContent = d.revenue;
+    $('k-delta').textContent = d.delta;
+    $('k-delta').className = 'delta ' + (d.deltaUp ? 'up' : 'down');
+    $('k-outstanding').textContent = d.outstanding; $('k-out-sub').textContent = d.outSub;
+    $('k-overdue').textContent = d.overdue; $('k-over-sub').textContent = d.overSub;
+    $('k-collected').textContent = d.collected; $('k-coll-sub').textContent = d.collSub;
+
+    // chart
+    $('chart-title').textContent = d.chartTitle;
+    $('chart-note').textContent = d.period;
+    const chart = $('chart');
+    chart.className = 'chart ' + d.cls;
+    const max = Math.max(...d.bars.map(b => b[1]), 1);
+    let lastActive = d.bars.reduce((acc, b, i) => b[1] > 0 ? i : acc, 0);
+    chart.innerHTML = d.bars.map(([m, v], i) =>
+      `<div class="bar ${i === lastActive ? 'now' : ''}"><div class="col" style="height:100%"><span class="${v === 0 ? 'empty' : ''}" style="height:${Math.max(v / max * 100, v === 0 ? 3 : 6)}%"></span></div><div class="m">${m}</div></div>`
+    ).join('');
+
+    // donut
+    const { collected, outstanding, overdue } = d.comp;
+    const total = collected + outstanding + overdue;
+    $('donut-note').textContent = 'of ' + inr.format(total).replace(/^/, '₹') + ' billed';
+    let offset = 0;
+    const gap = 4; // visible separation between segments
+    [['seg-collected', collected], ['seg-outstanding', outstanding], ['seg-overdue', overdue]].forEach(([id, val]) => {
+      const len = val / total * C;
+      const dash = Math.max(len - gap, 0);
+      const seg = $(id);
+      seg.setAttribute('stroke-dasharray', `${dash} ${C - dash}`);
+      seg.setAttribute('stroke-dashoffset', `${-offset}`);
+      offset += len;
+    });
+    $('lg-collected').innerHTML = money(collected);
+    $('lg-outstanding').innerHTML = money(outstanding);
+    $('lg-overdue').innerHTML = money(overdue);
+  }
+
+  document.getElementById('period').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-period]');
+    if (!btn) return;
+    document.querySelectorAll('#period button').forEach(b => b.classList.toggle('on', b === btn));
+    render(btn.dataset.period);
+  });
+
+  render('month');
+</script>
+<script src="assets/menu.js"></script>
+</body>
+</html>

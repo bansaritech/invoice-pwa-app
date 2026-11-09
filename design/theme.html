@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Theme</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+<style>
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 26px 22px 80px; }
+  .sec { margin-top: 40px; }
+  .sec > h2 { font-size: 13px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .14em; color: var(--ink-3); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .sw { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .sw .chip-box { height: 62px; }
+  .sw .meta2 { padding: 9px 11px; }
+  .sw .nm2 { font-weight: 700; font-size: 12.5px; }
+  .sw .vr { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
+  .row2 { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .stack { display: grid; gap: 12px; max-width: 420px; }
+  .trow { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px dashed var(--line); padding: 10px 0; }
+  .trow .tag2 { font-family: var(--mono); font-size: 11px; color: var(--ink-3); width: 130px; flex-shrink: 0; }
+  .note { color: var(--ink-2); font-size: 14px; max-width: 62ch; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="iconbtn" href="index.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="wordmark" style="font-size:18px"><span class="mark">₹</span> Theme</div>
+  <span class="spacer" style="flex:1"></span>
+  <button class="iconbtn" aria-label="Toggle theme" onclick="toggleTheme()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></button>
+</div>
+
+<div class="wrap">
+  <div class="page-head" style="margin-bottom:4px"><div><div class="eyebrow">Ledger design system</div><h1>Theme</h1></div></div>
+  <p class="note">Every token and component below is defined once in <b>assets/ledger.css</b> — the color variables live in <code>:root</code> (light) and <code>[data-theme="dark"]</code> (dark). Change a value there and it updates across every screen. Toggle the theme (top-right) to preview both.</p>
+
+  <!-- Colors -->
+  <section class="sec">
+    <h2>Surfaces &amp; ink</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip-box" style="background:var(--bg)"></div><div class="meta2"><div class="nm2">Background</div><div class="vr">--bg</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--panel)"></div><div class="meta2"><div class="nm2">Panel</div><div class="vr">--panel</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--paper-2)"></div><div class="meta2"><div class="nm2">Paper 2</div><div class="vr">--paper-2</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--ink)"></div><div class="meta2"><div class="nm2">Ink</div><div class="vr">--ink</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--ink-2)"></div><div class="meta2"><div class="nm2">Ink 2</div><div class="vr">--ink-2</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--ink-3)"></div><div class="meta2"><div class="nm2">Ink 3</div><div class="vr">--ink-3</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--line)"></div><div class="meta2"><div class="nm2">Line</div><div class="vr">--line</div></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Brand &amp; status</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip-box" style="background:var(--accent)"></div><div class="meta2"><div class="nm2">Accent</div><div class="vr">--accent</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--pop)"></div><div class="meta2"><div class="nm2">Pop</div><div class="vr">--pop</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--paid)"></div><div class="meta2"><div class="nm2">Paid</div><div class="vr">--paid</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--info)"></div><div class="meta2"><div class="nm2">Info / Partial</div><div class="vr">--info</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--due)"></div><div class="meta2"><div class="nm2">Due</div><div class="vr">--due</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--over)"></div><div class="meta2"><div class="nm2">Overdue</div><div class="vr">--over</div></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>Data colors (red · green · blue)</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip-box" style="background:var(--c-green)"></div><div class="meta2"><div class="nm2">Green</div><div class="vr">--c-green</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--c-blue)"></div><div class="meta2"><div class="nm2">Blue</div><div class="vr">--c-blue</div></div></div>
+      <div class="sw"><div class="chip-box" style="background:var(--c-red)"></div><div class="meta2"><div class="nm2">Red</div><div class="vr">--c-red</div></div></div>
+    </div>
+  </section>
+
+  <!-- Typography -->
+  <section class="sec">
+    <h2>Typography</h2>
+    <div class="trow"><span class="tag2">h1 · 800</span><h1 style="margin:0">Invoice overview</h1></div>
+    <div class="trow"><span class="tag2">h2 · 700</span><h2 style="margin:0;border:0;padding:0;text-transform:none;letter-spacing:-.01em;font-size:16px;color:var(--ink);font-family:var(--ui)">Section heading</h2></div>
+    <div class="trow"><span class="tag2">body · 400</span><span>The quick brown fox jumps over the lazy dog.</span></div>
+    <div class="trow"><span class="tag2">meta · mono</span><span class="meta" style="font-family:var(--mono)">INV-2026-042 · 02 Sep</span></div>
+    <div class="trow"><span class="tag2">figures · mono</span><span class="num" style="font-size:18px;font-weight:600"><span class="rupee">₹</span>1,26,968</span></div>
+    <p class="note" style="margin-top:14px">UI: <b>Source Sans 3</b> (<code>--ui</code>). Figures: <b>JetBrains Mono</b> (<code>--mono</code>, tabular).</p>
+  </section>
+
+  <!-- Buttons -->
+  <section class="sec">
+    <h2>Buttons</h2>
+    <div class="row2">
+      <button class="btn btn-primary">Primary</button>
+      <button class="btn btn-ghost">Ghost</button>
+      <button class="btn btn-primary" disabled>Disabled</button>
+      <button class="iconbtn" aria-label="Icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></button>
+    </div>
+    <div style="max-width:320px;margin-top:14px"><button class="btn btn-primary" style="width:100%;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Add item</button></div>
+  </section>
+
+  <!-- Chips -->
+  <section class="sec">
+    <h2>Status chips</h2>
+    <div class="row2">
+      <span class="chip paid">Paid</span>
+      <span class="chip partial">Partial</span>
+      <span class="chip due">Unpaid</span>
+      <span class="chip over">Overdue</span>
+      <span class="chip draft">Draft</span>
+    </div>
+  </section>
+
+  <!-- Bands -->
+  <section class="sec">
+    <h2>Status bands</h2>
+    <div class="row2" style="align-items:stretch">
+      <div style="position:relative;height:56px;width:150px;border:1px solid var(--line);border-radius:10px;overflow:hidden"><div class="dateblock s-paid" style="width:52px"><b>02</b><span>Sep</span></div></div>
+      <div style="position:relative;height:56px;width:150px;border:1px solid var(--line);border-radius:10px;overflow:hidden"><div class="statusbar s-over"><b>Overdue</b></div></div>
+      <div style="position:relative;height:56px;width:150px;border:1px solid var(--line);border-radius:10px;overflow:hidden"><div class="statusbar s-service"><b>Service</b></div></div>
+    </div>
+  </section>
+
+  <!-- Inputs -->
+  <section class="sec">
+    <h2>Inputs &amp; controls</h2>
+    <div class="stack">
+      <label class="field" style="margin:0"><span class="lab">Text field</span><input class="input" value="Acme Traders" /></label>
+      <label class="field" style="margin:0"><span class="lab">Select</span><select class="input"><option>Net 15</option><option>Net 30</option></select></label>
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="Search…" /></label>
+      <div class="segment"><button class="on">Month</button><button>Year</button></div>
+      <div class="filter-row" style="flex-wrap:wrap;overflow:visible"><button class="fchip on">All</button><button class="fchip">Paid</button><button class="fchip">Overdue</button></div>
+      <div class="row2"><span style="font-size:13px;color:var(--ink-2)">Toggle</span><button class="switch on"></button><button class="switch"></button></div>
+    </div>
+  </section>
+
+  <!-- Cards -->
+  <section class="sec">
+    <h2>Cards &amp; KPIs</h2>
+    <div class="kpis compact" style="grid-template-columns:repeat(2,1fr);max-width:520px">
+      <div class="card kpi feature" style="grid-column:auto"><div class="label">Collected</div><div class="value num"><span class="rupee">₹</span>3,46,400</div><div class="delta up">▲ 8 payments</div></div>
+      <div class="card kpi"><div class="label">Outstanding</div><div class="value num"><span class="rupee">₹</span>1,36,200</div><div class="delta">9 invoices</div></div>
+    </div>
+  </section>
+
+  <!-- Drawer -->
+  <section class="sec">
+    <h2>Drawer &amp; empty state</h2>
+    <div class="row2"><button class="btn btn-primary" onclick="openDrawer('drawer-demo')">Open drawer</button></div>
+    <div class="card" style="max-width:420px;margin-top:16px"><div class="empty"><div class="em"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h10l3 3v15H4V6z"/></svg></div><h3>Nothing here yet</h3><p>Empty-state pattern using the <code>.empty</code> component.</p></div></div>
+  </section>
+</div>
+
+<aside class="drawer" id="drawer-demo" role="dialog" aria-label="Demo drawer">
+  <div class="drawer-head"><div><h3>Drawer</h3><div class="sub">Right-side panel pattern</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body"><label class="field"><span class="lab">Field</span><input class="input" placeholder="Type here" /></label><p class="note" style="font-size:13px">Used for all add/edit flows across the app.</p></div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" style="flex:1;justify-content:center" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<script src="assets/drawer.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — INV-2026-041</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+<style>
+  #paylist li { cursor: pointer; transition: background .14s; }
+  #paylist li:hover { background: var(--paper-2); }
+</style>
+</head>
+<body data-active="invoices" data-title="Invoice" data-back="invoices.html">
+<div class="app">
+  <div id="nav-side"></div>
+  <div id="nav-top"></div>
+  <main class="main">
+    <div class="page-head">
+      <div><div class="eyebrow">Invoice</div><h1 style="font-size:28px">INV-2026-041</h1><div class="period-note" style="margin-top:4px"><span class="chip over" style="height:22px">Overdue · 3 days</span></div></div>
+      <div class="desktop-actions">
+        <button class="btn btn-ghost">Print / PDF</button>
+        <button class="btn btn-primary">Share</button>
+      </div>
+    </div>
+
+    <div class="split">
+      <div>
+        <!-- Document -->
+        <div class="doc">
+          <div class="doc-top">
+            <div>
+              <div class="biz">Bansari Tech</div>
+              <div class="muted">402, Silver Business Point<br>Surat, Gujarat 395006<br>GSTIN 24AABCB1234Z1Z5</div>
+            </div>
+            <div class="doc-title">
+              <div class="big">INVOICE</div>
+              <div class="muted num">INV-2026-041<br>Date · 31 Aug 2026<br>Due · 18 Sep 2026</div>
+            </div>
+          </div>
+
+          <div class="doc-parties">
+            <div><div class="lbl">Billed to</div><div style="font-weight:700">Northstar Supplies</div><div class="muted">GSTIN 24AAB…1Z5<br>Surat, Gujarat</div></div>
+            <div><div class="lbl">Payment</div><div class="muted">UPI · bansaritech@okhdfc<br>A/C 5011 2345 6789 · HDFC<br>IFSC HDFC0001234</div></div>
+          </div>
+
+          <table class="doc-table">
+            <thead><tr><th>Item</th><th class="r">Qty</th><th class="r">Rate</th><th class="r">GST</th><th class="r">Amount</th></tr></thead>
+            <tbody>
+              <tr><td>Consulting</td><td class="r num">20</td><td class="r num">2,500</td><td class="r num">18%</td><td class="r num">50,000</td></tr>
+              <tr><td>Design work</td><td class="r num">12</td><td class="r num">1,800</td><td class="r num">18%</td><td class="r num">21,600</td></tr>
+              <tr><td>Website maintenance</td><td class="r num">3</td><td class="r num">12,000</td><td class="r num">18%</td><td class="r num">36,000</td></tr>
+            </tbody>
+          </table>
+
+          <div class="doc-sum">
+            <div class="totals">
+              <div class="row"><span class="k">Subtotal</span><span class="v num"><span class="rupee">₹</span>1,07,600</span></div>
+              <div class="row"><span class="k">GST (18%)</span><span class="v num"><span class="rupee">₹</span>19,368</span></div>
+              <div class="row grand"><span class="k">Total</span><span class="v num"><span class="rupee">₹</span>1,26,968</span></div>
+              <div class="row"><span class="k">Paid</span><span class="v num" style="color:var(--paid)">− <span class="rupee">₹</span>2,968</span></div>
+              <div class="row"><span class="k" style="color:var(--over)">Balance due</span><span class="v num" style="color:var(--over)"><span class="rupee">₹</span>1,24,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <section class="section" style="margin-top:0">
+          <div class="section-head"><h2>Payments</h2><button class="btn btn-ghost" style="height:34px;padding:0 12px;font-size:13px" onclick="openPayment('new')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:16px;height:16px"><path d="M12 5v14M5 12h14"/></svg> Record</button></div>
+          <div class="card">
+            <ul class="ledger" id="paylist">
+              <li data-amount="2968" data-date="2026-09-02" data-method="upi" data-txn="UPI-8842213"><div><div class="who num"><span class="rupee">₹</span>2,968</div><div class="meta">02 Sep 2026 · UPI</div></div><div class="chip-wrap"><span class="chip paid">Received</span></div></li>
+            </ul>
+          </div>
+          <p class="period-note" style="margin:10px 4px 0">Balance due <span class="num" style="color:var(--over);font-weight:600"><span class="rupee">₹</span>1,24,000</span> of <span class="num"><span class="rupee">₹</span>1,26,968</span></p>
+        </section>
+        <section class="section">
+          <div class="section-head"><h2>Activity</h2></div>
+          <div class="card card-pad">
+            <ul class="timeline">
+              <li><div class="t">Invoice created</div><div class="d">31 Aug 2026 · 10:12</div></li>
+              <li><div class="t">Sent to client</div><div class="d">31 Aug 2026 · 10:15</div></li>
+              <li><div class="t">Part payment · ₹2,968</div><div class="d">02 Sep 2026 · UPI</div></li>
+              <li class="pending"><div class="t">Balance due</div><div class="d">Due 18 Sep 2026</div></li>
+            </ul>
+          </div>
+        </section>
+        <section class="section">
+          <div class="card card-pad" style="display:grid;gap:10px">
+            <button class="btn btn-ghost" style="width:100%;justify-content:center">Send reminder</button>
+            <a class="btn btn-ghost" href="invoice-editor.html" style="width:100%;justify-content:center">Edit invoice</a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <div id="nav-bot"></div>
+</div>
+
+<!-- Record / edit payment drawer -->
+<aside class="drawer" id="drawer-payment" role="dialog" aria-label="Payment">
+  <div class="drawer-head">
+    <div><h3 id="pay-h">Record payment</h3><div class="sub">INV-2026-041 · Northstar Supplies</div></div>
+    <button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="card card-pad" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;background:var(--paper-2)"><span class="period-note">Balance due</span><span class="num" style="font-weight:600;color:var(--over)"><span class="rupee">₹</span>1,24,000</span></div>
+    <div class="grid-2">
+      <label class="field"><span class="lab">Amount (₹)</span><input class="input num" id="pay-amount" /></label>
+      <label class="field"><span class="lab">Date</span><input class="input" type="date" id="pay-date" /></label>
+    </div>
+    <label class="field"><span class="lab">Method</span><select class="input" id="pay-method"><option value="upi">UPI</option><option value="bank">Bank transfer</option><option value="cash">Cash</option><option value="cheque">Cheque</option></select></label>
+    <label class="field" style="margin:0"><span class="lab">Reference (optional)</span><input class="input" id="pay-txn" placeholder="UTR / txn id" /></label>
+  </div>
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" id="pay-del" style="color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent)">Delete</button>
+    <button class="btn btn-primary" id="pay-save" style="flex:1;justify-content:center" onclick="closeDrawer()">Save payment</button>
+  </div>
+</aside>
+
+<script src="assets/drawer.js"></script>
+<script src="assets/shell.js"></script>
+<script src="assets/menu.js"></script>
+<script>
+  function openPayment(mode, el) {
+    const isEdit = mode === 'edit';
+    document.getElementById('pay-h').textContent = isEdit ? 'Edit payment' : 'Record payment';
+    document.getElementById('pay-del').style.display = isEdit ? '' : 'none';
+    document.getElementById('pay-save').textContent = isEdit ? 'Save changes' : 'Save payment';
+    const a = document.getElementById('pay-amount'), d = document.getElementById('pay-date'), m = document.getElementById('pay-method'), t = document.getElementById('pay-txn');
+    if (isEdit && el) { a.value = el.dataset.amount; a.placeholder = ''; d.value = el.dataset.date; m.value = el.dataset.method; t.value = el.dataset.txn || ''; }
+    else { a.value = ''; a.placeholder = '1,24,000 due'; d.value = '2026-09-04'; m.value = 'upi'; t.value = ''; }
+    openDrawer('drawer-payment');
+  }
+  document.getElementById('paylist').addEventListener('click', (e) => { const li = e.target.closest('li'); if (li) openPayment('edit', li); });
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — States</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+<style>
+  .wrap { max-width: 960px; margin: 0 auto; padding: 30px 22px 70px; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  @media (min-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .label { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-3); margin-bottom: 8px; }
+  .skel { height: 14px; border-radius: 6px; background: linear-gradient(90deg, var(--paper-2) 25%, color-mix(in srgb, var(--paper-2) 55%, var(--panel)) 50%, var(--paper-2) 75%); background-size: 200% 100%; animation: sh 1.2s infinite; }
+  @keyframes sh { to { background-position: -200% 0; } }
+  .skelrow { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .skelrow:last-child { border: 0; }
+  .skelrow .sq { width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="iconbtn" href="index.html" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+  <div class="wordmark" style="font-size:18px">States reference</div>
+  <span class="spacer" style="flex:1"></span>
+  <button class="iconbtn" aria-label="Toggle theme" onclick="toggleTheme()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></button>
+</div>
+
+<div class="wrap">
+  <div class="grid">
+    <div>
+      <div class="label">Empty — no invoices</div>
+      <div class="card">
+        <div class="empty">
+          <div class="em"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h10l3 3v15H4V6zM8 13h8M8 17h5"/></svg></div>
+          <h3>No invoices yet</h3>
+          <p>Create your first invoice and it'll show up here with its status and balance.</p>
+          <button class="btn btn-primary">New invoice</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Empty — no data source</div>
+      <div class="card">
+        <div class="empty">
+          <div class="em"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></div>
+          <h3>Connect a data source</h3>
+          <p>Link a private repository to start saving invoices, clients and items.</p>
+          <button class="btn btn-primary">Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Error</div>
+      <div class="card">
+        <div class="empty">
+          <div class="em" style="background:color-mix(in srgb,var(--over) 12%,transparent);color:var(--over)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v5M12 16h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+          <h3>Couldn't load data</h3>
+          <p>Check your connection and token, then try again.</p>
+          <button class="btn btn-ghost">Retry</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Offline</div>
+      <div class="card">
+        <div class="empty">
+          <div class="em" style="background:color-mix(in srgb,var(--due) 14%,transparent);color:var(--due)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 1l22 22M16.7 11.3a6 6 0 0 0-9-1M5 12.5a10 10 0 0 1 3-2M8.5 16a4 4 0 0 1 5 0M12 20h.01"/></svg></div>
+          <h3>You're offline</h3>
+          <p>Showing your last synced data. Changes will save when you're back online.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Loading — skeleton</div>
+      <div class="card">
+        <div class="skelrow"><div class="skel sq"></div><div style="flex:1"><div class="skel" style="width:60%"></div><div class="skel" style="width:35%;margin-top:8px;height:11px"></div></div><div class="skel" style="width:64px;height:16px"></div></div>
+        <div class="skelrow"><div class="skel sq"></div><div style="flex:1"><div class="skel" style="width:52%"></div><div class="skel" style="width:30%;margin-top:8px;height:11px"></div></div><div class="skel" style="width:64px;height:16px"></div></div>
+        <div class="skelrow"><div class="skel sq"></div><div style="flex:1"><div class="skel" style="width:68%"></div><div class="skel" style="width:40%;margin-top:8px;height:11px"></div></div><div class="skel" style="width:64px;height:16px"></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="label">Search — no results</div>
+      <div class="card">
+        <div class="empty">
+          <div class="em"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div>
+          <h3>No matches</h3>
+          <p>No invoices match “acmee”. Try a different name or number.</p>
+          <button class="btn btn-ghost">Clear search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

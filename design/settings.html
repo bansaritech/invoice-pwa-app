@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ledger — Settings</title>
+<link rel="stylesheet" href="assets/ledger.css" />
+<script src="assets/theme.js"></script>
+<style>
+  .iconpick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .iconpick .tile { position: relative; aspect-ratio: 1/1; border-radius: 16px; border: 2px solid transparent; cursor: pointer; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 22px; overflow: hidden; background-size: cover; background-position: center; }
+  .iconpick .tile svg { width: 28px; height: 28px; }
+  #appicon-thumb svg { width: 19px; height: 19px; }
+  .iconpick .tile.sel { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent); }
+  .iconpick .tile.sel::after { content: '✓'; position: absolute; top: 5px; right: 6px; font-size: 12px; background: var(--primary); color: #fff; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; }
+  .iconpick .upload { background: var(--paper-2); border: 2px dashed var(--line-2); color: var(--ink-3); font-size: 11px; font-weight: 700; text-align: center; gap: 3px; }
+  .iconpick .upload svg { width: 20px; height: 20px; }
+  .iconpick .upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+</style>
+</head>
+<body data-active="settings" data-title="Settings" data-fab="none">
+<div class="app">
+  <div id="nav-side"></div>
+  <div id="nav-top"></div>
+  <main class="main" style="max-width:760px">
+    <div class="page-head"><div><div class="eyebrow">Bansari Tech</div><h1>Settings</h1></div></div>
+
+    <!-- Business profile -->
+    <button class="card card-pad" onclick="openDrawer('drawer-profile')" style="display:flex;align-items:center;gap:16px;width:100%;text-align:left;cursor:pointer;color:var(--ink)">
+      <span class="avatar" style="width:56px;height:56px;border-radius:16px;font-size:20px">BT</span>
+      <div style="flex:1;min-width:0"><div style="font-weight:800;font-size:17px">Bansari Tech</div><div class="period-note">GSTIN 24AABCB1234Z1Z5 · Surat, Gujarat</div></div>
+      <span class="chev" style="color:var(--ink-3)">›</span>
+    </button>
+
+    <!-- Data source status -->
+    <div class="card card-pad" style="margin-top:14px;background:color-mix(in srgb,var(--accent) 5%,transparent);border-color:color-mix(in srgb,var(--accent) 22%,transparent)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);display:grid;place-items:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/></svg></span>
+        <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:8px">Data source <span class="chip" id="src-chip" style="height:20px"></span></div><div class="period-note" id="src-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div></div>
+        <button class="btn btn-ghost" onclick="openDrawer('drawer-source')">Manage</button>
+      </div>
+    </div>
+
+    <div class="setgroup">Invoicing</div>
+    <div class="card">
+      <ul class="set-list">
+        <li class="set-row tap" onclick="openDrawer('drawer-numbering')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span><span class="grow"><span class="t">Invoice numbering</span><span class="s">Next: INV-2026-043</span></span><span class="val">INV-{YYYY}-{###}</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-taxmode')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span><span class="grow"><span class="t">Tax applied on</span><span class="s">Per line item, or the whole invoice</span></span><span class="val" id="taxmode-val">Invoice</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-taxlabel')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h5l9 9-8 8-9-9zM3 12l9 9"/></svg></span><span class="grow"><span class="t">Tax label</span><span class="s">Name shown for tax on invoices</span></span><span class="val">GST</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-gst')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M7 6V4h10v2M6 6l1 14h10l1-14"/></svg></span><span class="grow"><span class="t">Default tax</span><span class="s">Pre-filled tax on new invoices</span></span><span class="val">18%</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-discount')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 9h.01M15 15h.01M8 16L16 8M4 8V5a1 1 0 0 1 1-1h3M20 8V5a1 1 0 0 0-1-1h-3M4 16v3a1 1 0 0 0 1 1h3M20 16v3a1 1 0 0 1-1 1h-3"/></svg></span><span class="grow"><span class="t">Default discount</span><span class="s">Pre-filled discount on new invoices</span></span><span class="val">₹0</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-terms')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg></span><span class="grow"><span class="t">Payment terms</span><span class="s">Default due date on new invoices</span></span><span class="val">Net 15</span></li>
+      </ul>
+    </div>
+
+    <div class="setgroup">Branding</div>
+    <div class="card">
+      <ul class="set-list">
+        <li class="set-row tap" onclick="openDrawer('drawer-appicon')"><span class="ic" id="appicon-thumb" style="background:var(--ink);color:var(--pop);font-weight:800;font-size:16px">₹</span><span class="grow"><span class="t">App icon</span><span class="s">Icon for the installed app &amp; header</span></span><span class="chev">›</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-brand')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="grow"><span class="t">Logo</span><span class="s">Shown on invoices &amp; the app</span></span><span class="chip paid" style="height:22px">Set</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-brand')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h4v4H7zM13 13h4v4h-4z"/></svg></span><span class="grow"><span class="t">Payment QR</span><span class="s">Attached to invoice PDF</span></span><span class="chip paid" style="height:22px">Set</span></li>
+      </ul>
+    </div>
+
+    <div class="setgroup">Preferences</div>
+    <div class="card">
+      <ul class="set-list">
+        <li class="set-row"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-theme-icon></svg></span><span class="grow"><span class="t" data-theme-label>Dark mode</span><span class="s">Appearance</span></span><button class="switch" id="themeSwitch" onclick="toggleTheme();this.classList.toggle('on', document.documentElement.getAttribute('data-theme')==='dark')"></button></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-currency')"><span class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></span><span class="grow"><span class="t">Currency &amp; format</span><span class="s">Number formatting</span></span><span class="val">₹ · en-IN</span></li>
+      </ul>
+    </div>
+
+    <div class="setgroup">Team</div>
+    <div class="card">
+      <ul class="set-list">
+        <li class="set-row"><span class="ini" style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--paper-2);color:var(--accent);font-weight:700;font-size:13px">HP</span><span class="grow"><span class="t">Harikrushna P.</span><span class="s">Owner · you</span></span></li>
+        <li class="set-row"><span class="ini" style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--paper-2);color:var(--accent);font-weight:700;font-size:13px">RS</span><span class="grow"><span class="t">Riya S.</span><span class="s">Editor</span></span><span class="val">Invited</span></li>
+        <li class="set-row tap" onclick="openDrawer('drawer-invite')"><span class="ic" style="color:var(--accent)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span><span class="grow"><span class="t" style="color:var(--accent)">Invite member</span></span></li>
+      </ul>
+    </div>
+
+    <a href="welcome.html" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:20px;color:var(--over);border-color:color-mix(in srgb,var(--over) 30%,transparent);text-decoration:none">Sign out</a>
+    <p style="text-align:center;color:var(--ink-3);font-family:var(--mono);font-size:11px;margin-top:16px">Ledger · v1.0.0</p>
+  </main>
+  <div id="nav-bot"></div>
+</div>
+
+<!-- Profile drawer -->
+<aside class="drawer" id="drawer-profile" role="dialog" aria-label="Business profile">
+  <div class="drawer-head"><div><h3>Business profile</h3><div class="sub">Appears on your invoices</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Business name</span><input class="input" value="Bansari Tech" /></label>
+    <label class="field"><span class="lab">GSTIN</span><input class="input num" value="24AABCB1234Z1Z5" /></label>
+    <div class="grid-2">
+      <label class="field"><span class="lab">Phone</span><input class="input num" value="+91 98250 00000" /></label>
+      <label class="field"><span class="lab">Email</span><input class="input" value="hello@bansaritech.in" /></label>
+    </div>
+    <label class="field" style="margin:0"><span class="lab">Address</span><textarea class="input">402, Silver Business Point, Surat, Gujarat 395006</textarea></label>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Data source drawer -->
+<aside class="drawer" id="drawer-source" role="dialog" aria-label="Data source">
+  <div class="drawer-head"><div><h3>Data source</h3><div class="sub">Private repository that stores your data</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <div class="field"><span class="lab">Sync</span>
+      <div id="sync-status" class="card card-pad" style="display:flex;gap:10px;align-items:center;margin-bottom:12px"></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" id="pull-btn" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5"/></svg> Sync</button>
+        <button class="btn btn-primary" id="push-btn" style="flex:1;justify-content:center"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 0l-4 4m4-4l4 4M5 3h14"/></svg> Push</button>
+      </div>
+      <p style="margin:14px 0 0;font-size:12px;color:var(--ink-3);line-height:1.55"><b style="color:var(--ink-2)">Sync</b> pulls the latest data from your repository into this device. <b style="color:var(--ink-2)">Upload</b> saves local changes to the repo — this also runs automatically in the background as you work, so changes appear instantly here and upload behind the scenes.</p>
+    </div>
+
+    <div class="setgroup" style="margin-top:6px">Connection</div>
+    <label class="field"><span class="lab">Repository</span><input class="input num" value="bansari/ledger" /></label>
+    <label class="field"><span class="lab">Branch</span><input class="input num" value="main" /></label>
+    <label class="field" style="margin:0"><span class="lab">Access token</span><input class="input" type="password" placeholder="Enter a new token to replace" /><span class="s" style="display:block;margin-top:6px;color:var(--ink-3);font-size:12px">A token is saved and encrypted. Enter a new one only to replace it.</span></label>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Validate &amp; save</button></div>
+</aside>
+
+<!-- Numbering drawer -->
+<aside class="drawer" id="drawer-numbering" role="dialog" aria-label="Invoice numbering">
+  <div class="drawer-head"><div><h3>Invoice numbering</h3><div class="sub">How new invoice numbers are generated</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Format</span><input class="input num" id="fmt-input" value="INV-{YYYY}-{###}" /></label>
+
+    <div class="field">
+      <span class="lab">Quick presets</span>
+      <div class="filter-row" id="fmt-presets" style="flex-wrap:wrap;overflow:visible">
+        <button class="fchip num" data-fmt="INV-{YYYY}-{###}">INV-{YYYY}-{###}</button>
+        <button class="fchip num" data-fmt="INV/{FY}/{###}">INV/{FY}/{###}</button>
+        <button class="fchip num" data-fmt="{YY}{MM}-{###}">{YY}{MM}-{###}</button>
+        <button class="fchip num" data-fmt="INV-{MMM}{YY}-{##}">INV-{MMM}{YY}-{##}</button>
+        <button class="fchip num" data-fmt="{YYYY}/{####}">{YYYY}/{####}</button>
+      </div>
+    </div>
+
+    <div class="card card-pad" style="background:var(--paper-2);display:flex;justify-content:space-between;align-items:center">
+      <span class="period-note">Preview</span>
+      <span style="font-weight:700" class="num" id="fmt-preview">INV-2026-043</span>
+    </div>
+
+    <label class="field" style="margin-top:14px"><span class="lab">Next number</span><input class="input num" id="fmt-next" value="43" style="max-width:120px" /></label>
+
+    <div class="field" style="margin:0">
+      <span class="lab">Tokens you can use</span>
+      <div class="card" style="overflow:hidden">
+        <ul class="set-list" style="font-size:13px">
+          <li class="set-row" style="padding:9px 14px"><span class="val" style="width:64px">{YYYY}</span><span class="grow"><span class="s">Full year</span></span><span class="num" style="color:var(--ink-3)">2026</span></li>
+          <li class="set-row" style="padding:9px 14px"><span class="val" style="width:64px">{YY}</span><span class="grow"><span class="s">Year, 2 digits</span></span><span class="num" style="color:var(--ink-3)">26</span></li>
+          <li class="set-row" style="padding:9px 14px"><span class="val" style="width:64px">{FY}</span><span class="grow"><span class="s">Financial year</span></span><span class="num" style="color:var(--ink-3)">2026-27</span></li>
+          <li class="set-row" style="padding:9px 14px"><span class="val" style="width:64px">{MM}</span><span class="grow"><span class="s">Month number</span></span><span class="num" style="color:var(--ink-3)">09</span></li>
+          <li class="set-row" style="padding:9px 14px"><span class="val" style="width:64px">{MMM}</span><span class="grow"><span class="s">Month name</span></span><span class="num" style="color:var(--ink-3)">Sep</span></li>
+          <li class="set-row" style="padding:9px 14px"><span class="val" style="width:64px">{DD}</span><span class="grow"><span class="s">Day of month</span></span><span class="num" style="color:var(--ink-3)">04</span></li>
+          <li class="set-row" style="padding:9px 14px"><span class="val" style="width:64px">{#}…{####}</span><span class="grow"><span class="s">Sequence — # count = zero-padding</span></span><span class="num" style="color:var(--ink-3)">0043</span></li>
+        </ul>
+      </div>
+      <p class="note" style="font-size:12px;color:var(--ink-3);margin-top:10px">Any other text (like <b>INV</b>, <b>/</b>, <b>-</b>) is kept as-is. The sequence resets at the start of each financial year.</p>
+    </div>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Tax applied-on drawer -->
+<aside class="drawer" id="drawer-taxmode" role="dialog" aria-label="Tax applied on">
+  <div class="drawer-head"><div><h3>Tax applied on</h3><div class="sub">Changes the invoice form layout</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field" style="margin:0"><span class="lab">Mode</span>
+      <select class="input" id="taxmode-sel"><option value="invoice">Invoice level — one tax on the whole invoice</option><option value="item">Item level — each line has its own tax rate</option></select>
+    </label>
+    <p class="note" style="font-size:12.5px;color:var(--ink-3);margin-top:12px"><b>Invoice level</b> shows a single tax control in the totals. <b>Item level</b> adds a tax rate to each line item and sums them. New/edit invoice pages switch layout to match.</p>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Tax label drawer -->
+<aside class="drawer" id="drawer-taxlabel" role="dialog" aria-label="Tax label">
+  <div class="drawer-head"><div><h3>Tax label</h3><div class="sub">What tax is called on your invoices</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Label</span><select class="input" id="taxlabel-sel" onchange="document.getElementById('taxlabel-custom').style.display=this.value==='Custom'?'':'none'"><option>GST</option><option>VAT</option><option>TAX</option><option>Sales Tax</option><option>Custom</option></select></label>
+    <label class="field" id="taxlabel-custom" style="margin:0;display:none"><span class="lab">Custom label</span><input class="input" placeholder="e.g. Service Tax" /></label>
+    <p class="note" style="font-size:12.5px;color:var(--ink-3);margin-top:12px">Global default. Each invoice can still set its own tax value.</p>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Default tax drawer -->
+<aside class="drawer" id="drawer-gst" role="dialog" aria-label="Default tax">
+  <div class="drawer-head"><div><h3>Default tax</h3><div class="sub">Pre-filled on new invoices</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Type</span><select class="input"><option>Percentage (%)</option><option>Fixed amount (₹)</option></select></label>
+    <label class="field" style="margin:0"><span class="lab">Default value</span><input class="input num" value="18" /></label>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Default discount drawer -->
+<aside class="drawer" id="drawer-discount" role="dialog" aria-label="Default discount">
+  <div class="drawer-head"><div><h3>Default discount</h3><div class="sub">Pre-filled on new invoices</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Type</span><select class="input"><option>Percentage (%)</option><option>Fixed amount (₹)</option></select></label>
+    <label class="field" style="margin:0"><span class="lab">Default value</span><input class="input num" value="0" /></label>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Terms drawer -->
+<aside class="drawer" id="drawer-terms" role="dialog" aria-label="Payment terms">
+  <div class="drawer-head"><div><h3>Payment terms</h3><div class="sub">Default due date on new invoices</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field" style="margin:0"><span class="lab">Terms</span><select class="input"><option>Net 15</option><option>Net 30</option><option>Net 45</option><option>Due on receipt</option></select></label>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Currency drawer -->
+<aside class="drawer" id="drawer-currency" role="dialog" aria-label="Currency">
+  <div class="drawer-head"><div><h3>Currency &amp; format</h3><div class="sub">How amounts are displayed</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Currency</span><select class="input"><option>Indian Rupee (₹)</option></select></label>
+    <label class="field" style="margin:0"><span class="lab">Number format</span><select class="input"><option>Indian (1,00,000)</option><option>International (100,000)</option></select></label>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- App icon drawer -->
+<aside class="drawer" id="drawer-appicon" role="dialog" aria-label="App icon">
+  <div class="drawer-head"><div><h3>App icon</h3><div class="sub">Square icons only (1:1)</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <div class="iconpick" id="iconpick">
+      <button class="tile sel" data-icon="rupee" title="Rupee mark" style="background:var(--ink);color:var(--pop);font-weight:800;font-size:24px">₹</button>
+      <button class="tile" data-icon="invoice" title="Invoice" style="background:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></button>
+      <button class="tile" data-icon="ledger" title="Ledger / reports" style="background:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11M10 20V4M16 20v-6M20 20H4"/></svg></button>
+      <button class="tile" data-icon="paid" title="Paid" style="background:#7C3A63"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></button>
+      <button class="tile" data-icon="coin" title="Coin" style="background:linear-gradient(135deg,#F5B851,#E0623E)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3 3 0 0 0-2.5-1.2c-1.4 0-2.5.9-2.5 2s1.1 2 2.5 2 2.5.9 2.5 2-1.1 2-2.5 2A3 3 0 0 1 9.5 15M12 6.5v11"/></svg></button>
+      <label class="tile upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"/></svg>Upload<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" id="iconfile" /></label>
+    </div>
+    <p class="note" style="font-size:12.5px;color:var(--ink-3);margin-top:14px">Pick a preset or upload your own. Only <b>square</b> images are accepted — non-square uploads are rejected. Used for the installed app icon and the in-app header mark.</p>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Branding drawer -->
+<aside class="drawer" id="drawer-brand" role="dialog" aria-label="Branding">
+  <div class="drawer-head"><div><h3>Branding</h3><div class="sub">Logo &amp; payment QR</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <div class="field"><span class="lab">Invoice logo</span><div class="card card-pad" style="text-align:center;border-style:dashed"><div style="font-weight:700;font-size:13px">Drop an image or browse</div><div class="period-note" style="margin-top:2px">PNG, JPG, SVG · under 2 MB</div></div></div>
+    <div class="field" style="margin:0"><span class="lab">Payment QR</span><div class="card card-pad" style="text-align:center;border-style:dashed"><div style="font-weight:700;font-size:13px">Drop an image or browse</div><div class="period-note" style="margin-top:2px">Shown on the invoice PDF</div></div></div>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Save</button></div>
+</aside>
+
+<!-- Invite drawer -->
+<aside class="drawer" id="drawer-invite" role="dialog" aria-label="Invite member">
+  <div class="drawer-head"><div><h3>Invite member</h3><div class="sub">They'll get access to this workspace</div></div><button class="drawer-x" onclick="closeDrawer()" aria-label="Close">×</button></div>
+  <div class="drawer-body">
+    <label class="field"><span class="lab">Email</span><input class="input" placeholder="name@company.in" /></label>
+    <label class="field" style="margin:0"><span class="lab">Role</span><select class="input"><option>Editor</option><option>Viewer</option><option>Admin</option></select></label>
+  </div>
+  <div class="drawer-foot"><button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button><button class="btn btn-primary" onclick="closeDrawer()">Send invite</button></div>
+</aside>
+
+<script src="assets/drawer.js"></script>
+<script src="assets/shell.js"></script>
+<script src="assets/menu.js"></script>
+<script>
+  document.getElementById('themeSwitch').classList.toggle('on', document.documentElement.getAttribute('data-theme') === 'dark');
+
+  // Sync = pull latest into local DB (always available).
+  // Upload = commit local changes to the repo; enabled only when there are uncommitted local changes.
+  let localChanges = 2;
+  function renderSync() {
+    const dirty = localChanges > 0;
+    const chip = document.getElementById('src-chip');
+    const meta = document.getElementById('src-meta');
+    const push = document.getElementById('push-btn');
+    const status = document.getElementById('sync-status');
+
+    chip.className = 'chip ' + (dirty ? 'due' : 'paid');
+    chip.textContent = dirty ? localChanges + ' to upload' : 'Synced';
+    meta.textContent = dirty ? localChanges + ' local change' + (localChanges > 1 ? 's' : '') + ' not uploaded yet' : 'github.com/bansari/ledger · main · 2 min ago';
+
+    push.disabled = !dirty;
+    push.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 0l-4 4m4-4l4 4M5 3h14"/></svg> ' + (dirty ? 'Upload ' + localChanges : 'Up to date');
+
+    status.innerHTML = dirty
+      ? '<span class="chip due" style="height:22px">To upload</span><span style="font-size:12.5px;color:var(--ink-2)">' + localChanges + ' local change' + (localChanges > 1 ? 's' : '') + ' ready to upload</span>'
+      : '<span class="chip paid" style="height:22px">Synced</span><span style="font-size:12.5px;color:var(--ink-2)">Everything is up to date · auto-uploads in the background</span>';
+  }
+  document.getElementById('push-btn').addEventListener('click', () => { if (localChanges > 0) { localChanges = 0; renderSync(); } });
+  document.getElementById('pull-btn').addEventListener('click', () => { /* Sync pulls latest — always available */ });
+  renderSync();
+
+  // Tax applied-on: persisted so the invoice editor switches layout to match.
+  const taxLabelOf = (m) => m === 'item' ? 'Item' : 'Invoice';
+  const savedTaxMode = localStorage.getItem('ledger-taxmode') || 'invoice';
+  document.getElementById('taxmode-sel').value = savedTaxMode;
+  document.getElementById('taxmode-val').textContent = taxLabelOf(savedTaxMode);
+  document.getElementById('taxmode-sel').addEventListener('change', (e) => {
+    localStorage.setItem('ledger-taxmode', e.target.value);
+    document.getElementById('taxmode-val').textContent = taxLabelOf(e.target.value);
+  });
+
+  // Invoice number format — live preview from tokens.
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function formatNumber(fmt, date, seq) {
+    const y = date.getFullYear(), m = date.getMonth();
+    const fyStart = 4; // April
+    const fyA = (m + 1) >= fyStart ? y : y - 1;
+    const rep = {
+      '{YYYY}': String(y), '{YY}': String(y).slice(-2), '{FY}': fyA + '-' + String(fyA + 1).slice(-2),
+      '{MM}': String(m + 1).padStart(2, '0'), '{MMM}': MONTHS[m], '{DD}': String(date.getDate()).padStart(2, '0')
+    };
+    let out = fmt;
+    Object.keys(rep).forEach((k) => { out = out.split(k).join(rep[k]); });
+    // sequence: {#}…{#####} → zero-pad to the number of #
+    out = out.replace(/\{(#+)\}/g, (_, hashes) => String(seq).padStart(hashes.length, '0'));
+    return out;
+  }
+  function updateFmtPreview() {
+    const fmt = document.getElementById('fmt-input').value || '';
+    const seq = +document.getElementById('fmt-next').value || 1;
+    document.getElementById('fmt-preview').textContent = formatNumber(fmt, new Date('2026-09-04'), seq);
+  }
+  ['fmt-input', 'fmt-next'].forEach((id) => document.getElementById(id).addEventListener('input', updateFmtPreview));
+  document.getElementById('fmt-presets').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fmt]'); if (!b) return;
+    document.getElementById('fmt-input').value = b.dataset.fmt;
+    updateFmtPreview();
+  });
+  updateFmtPreview();
+
+  // App icon picker: choose a preset, or upload a square (1:1) custom icon.
+  const iconThumb = document.getElementById('appicon-thumb');
+  function selectTile(tile) {
+    document.querySelectorAll('#iconpick .tile').forEach((x) => x.classList.toggle('sel', x === tile));
+    // Reflect the choice in the settings row thumbnail.
+    const cs = getComputedStyle(tile);
+    if (tile.dataset.custom) {
+      iconThumb.innerHTML = '';
+      iconThumb.style.background = `center/cover url("${tile.dataset.custom}")`;
+    } else {
+      iconThumb.style.background = cs.backgroundImage !== 'none' ? cs.backgroundImage : cs.backgroundColor;
+      iconThumb.style.color = cs.color;
+      iconThumb.innerHTML = tile.innerHTML;
+    }
+  }
+  document.getElementById('iconpick').addEventListener('click', (e) => {
+    const t = e.target.closest('.tile[data-icon]'); if (t) selectTile(t);
+  });
+  document.getElementById('iconfile').addEventListener('change', (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      if (img.width !== img.height) { alert('Please choose a square (1:1) image.'); e.target.value = ''; return; }
+      const url = img.src;
+      const tile = e.target.closest('.tile');
+      tile.style.background = `center/cover url("${url}")`;
+      tile.textContent = '';
+      tile.dataset.custom = url;
+      tile.dataset.icon = 'custom';
+      selectTile(tile);
+    };
+    img.onerror = () => { alert('Could not read that image.'); e.target.value = ''; };
+    img.src = URL.createObjectURL(file);
+  });
+</script>
+</body>
+</html>
