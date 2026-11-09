@@ -84,4 +84,14 @@ try {
   showError(err);
 }
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+if ('serviceWorker' in navigator) {
+  // Auto-reload once when a new service worker takes control, so installed devices pick up
+  // new code (and the current data layout) instead of running stale cached assets.
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('./sw.js');
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || window.__swReloaded) return; // skip first install; reload once
+    window.__swReloaded = true;
+    location.reload();
+  });
+}
