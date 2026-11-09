@@ -21,8 +21,8 @@ const routes = [
   { pattern: /^#\/setup$/, view: setup, nav: '', onboarding: true },
   { pattern: /^#?\/?$/, view: dashboard, nav: 'overview' },
   { pattern: /^#\/invoices$/, view: invoices, nav: 'invoices' },
-  { pattern: /^#\/invoice\/new$/, view: editor, nav: 'invoices' },
-  { pattern: /^#\/invoice\/.+\/edit$/, view: editor, nav: 'invoices' },
+  { pattern: /^#\/invoice\/new$/, view: editor, nav: 'invoices', editing: true },
+  { pattern: /^#\/invoice\/.+\/edit$/, view: editor, nav: 'invoices', editing: true },
   { pattern: /^#\/invoice\/[^/]+$/, view: invoiceDetail, nav: 'invoices' },
   { pattern: /^#\/clients$/, view: clients, nav: 'clients' },
   { pattern: /^#\/client\/.+$/, view: clientDetail, nav: 'clients' },
@@ -40,6 +40,7 @@ function route() {
 
   // Gate: no data source connected → force onboarding before any inside page.
   document.body.classList.toggle('onboarding', !!match.onboarding);
+  document.body.classList.toggle('editing', !!match.editing); // mobile sticky save bar
   if (!store.connected() && !match.onboarding) { location.hash = '#/welcome'; return; }
   if (store.connected() && match.onboarding) { location.hash = '#/'; return; }
 

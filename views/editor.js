@@ -32,7 +32,7 @@ function paint() {
   const itemMode = draft.taxMode === 'item';
   rootRef.innerHTML = `
     <div class="page-head"><div><div class="eyebrow">${draft.status === 'draft' ? 'Draft' : 'Edit'}</div><h1>${esc(draft.number)}</h1></div>
-      <div class="page-actions"><a class="btn btn-ghost" href="#/invoices">Cancel</a><button class="btn btn-primary" id="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg> Save invoice</button></div>
+      <div class="page-actions editor-actions"><a class="btn btn-ghost" href="#/invoices">Cancel</a><button class="btn btn-primary" id="save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.75l6 6 9-13.5"/></svg> Save invoice</button></div>
     </div>
     <div class="editor-grid">
       <div>

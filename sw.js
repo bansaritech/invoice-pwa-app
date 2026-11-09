@@ -1,4 +1,4 @@
-const CACHE = 'ledger-v14';
+const CACHE = 'ledger-v15';
 const CORE = ['./', './index.html', './app.js', './manifest.webmanifest',
   './assets/ledger.css', './assets/theme.js', './assets/drawer.js'];
 

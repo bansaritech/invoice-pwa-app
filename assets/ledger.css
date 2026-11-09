@@ -529,13 +529,14 @@ textarea.input { height: auto; padding: 12px 14px; resize: vertical; min-height:
 .fab:active { transform: translateY(0); }
 
 /* ---------- Left drawer (add / create flows) ---------- */
-.drawer-scrim { position: fixed; inset: 0; background: rgba(10,12,16,.42); backdrop-filter: blur(2px); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 60; }
+.drawer-scrim { position: fixed; inset: 0; background: rgba(10,12,16,.42); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 60; }
 .drawer-scrim.open { opacity: 1; visibility: visible; }
 .drawer {
   position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 92vw); z-index: 61;
   background: var(--panel); border-left: 1px solid var(--line); box-shadow: var(--shadow-lg);
   display: flex; flex-direction: column; transform: translateX(102%);
-  transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  will-change: transform; backface-visibility: hidden;
 }
 .drawer.open { transform: none; }
 .drawer.drawer-wide { width: min(720px, 96vw); }
@@ -603,6 +604,19 @@ textarea.input { height: auto; padding: 12px 14px; resize: vertical; min-height:
 
 /* Header actions that stay visible on mobile (e.g. Add client / Add item) */
 .page-actions { display: flex; gap: 10px; flex-shrink: 0; }
+
+/* Editor Save/Cancel: a fixed bottom bar on mobile so it's always reachable */
+@media (max-width: 899px) {
+  .editor-actions {
+    position: fixed; left: 0; right: 0; bottom: var(--nav-h); z-index: 46;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom) / 2);
+    background: color-mix(in srgb, var(--panel) 96%, transparent);
+    border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(0,0,0,.08);
+  }
+  .editor-actions .btn { flex: 1; justify-content: center; height: 46px; }
+  body.editing .fab { display: none; }           /* avoid overlapping the save bar */
+  body.editing .main { padding-bottom: calc(var(--nav-h) + 86px); }
+}
 
 /* More menu (mobile nav sheet) */
 .morelink {
