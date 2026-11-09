@@ -56,6 +56,7 @@
 }
 
 /* ---------- Dark mode (Nocturne) ---------- */
+[data-theme="dark"] { color-scheme: dark; }
 [data-theme="dark"] {
   --paper:   #0B0E14;
   --paper-2: #1C2330;
