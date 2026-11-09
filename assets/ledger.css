@@ -603,7 +603,7 @@ textarea.input { height: auto; padding: 12px 14px; resize: vertical; min-height:
 }
 
 /* Header actions that stay visible on mobile (e.g. Add client / Add item) */
-.page-actions { display: flex; gap: 10px; flex-shrink: 0; }
+.page-actions { display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
 
 /* Editor Save/Cancel: a fixed bottom bar on mobile so it's always reachable */
 @media (max-width: 899px) {
